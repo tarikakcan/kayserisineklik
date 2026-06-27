@@ -1,0 +1,26 @@
+{
+  "name": "Kayseri Sineklik",
+  "domain": "kayserisineklik.com.tr",
+  "url": "https://kayserisineklik.com.tr",
+  "company": "Edeka Otomatik Kapı Sistemleri",
+  "address": {
+    "full": "Fevzi Çakmak, Fuzuli Cd. No:63, 38020 Kocasinan/Kayseri"
+  },
+  "phone": "0538 820 20 36",
+  "phoneIntl": "+905388202036",
+  "whatsappNumber": "905388202036",
+  "email": "info@edekakapi.com",
+  "slogans": [
+    "Sinek Girmesin, İçeri Ferahlık Girsin.",
+    "Her Ölçüye Uyan Sineklik, Her Bütçeye Uygun Fiyat."
+  ],
+  "shipping": {
+    "daysCity": "Kayseri içi 1-2 iş günü",
+    "daysCountry": "Türkiye geneli 2-5 iş günü"
+  },
+  "description": "Türkiye'nin her yerine kargo! Plise, menteşeli, sürgülü, kedi ve pencere sinekliği ölçüye özel üretim.",
+  "workingHours": "Pzt - Cmt: 09:00 - 19:00",
+  "pricingApi": "https://admin.kayserisineklik.com.tr/api/pricing.php",
+  "formContact": "/api/contact.php",
+  "formQuote": "/api/quote.php"
+}

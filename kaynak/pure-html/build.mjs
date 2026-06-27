@@ -1,0 +1,330 @@
+/**
+ * Saf HTML site üretici — _next yok, sürükle-bırak deploy.
+ * Çalıştır: npm run build  (proje kökünden)
+ */
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath, pathToFileURL } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const ROOT = path.join(__dirname, '..')
+const PROJECT = path.join(ROOT, '..')
+const OUT = path.join(PROJECT, '1-CANLI-SITE')
+const ADMIN_OUT = path.join(PROJECT, '2-ADMIN')
+
+const { site } = await import(pathToFileURL(path.join(ROOT, 'lib/site-config.js')).href)
+const { products } = await import(pathToFileURL(path.join(ROOT, 'lib/products-config.js')).href)
+const { blogPosts } = await import(pathToFileURL(path.join(ROOT, 'lib/blog-posts.js')).href)
+
+const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+const wa = (msg = 'Merhaba, sineklik için bilgi almak istiyorum.') =>
+  `https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(msg)}`
+
+function jsonLd(data) {
+  return `<script type="application/ld+json">${JSON.stringify(data)}</script>`
+}
+
+function head({ title, description, canonical, depth = 0 }) {
+  const p = depth ? '../'.repeat(depth) : ''
+  return `<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(description)}"/>
+<link rel="canonical" href="${site.url}${canonical}"/>
+<link rel="icon" href="${p}logo.svg" type="image/svg+xml"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="${p}assets/css/site.css"/>
+<link rel="stylesheet" href="${p}assets/css/site-fallback.css"/>
+<style>:root{--font-sans:'Inter',system-ui,sans-serif;--font-display:'Playfair Display',Georgia,serif}body{font-family:var(--font-sans)}h1,h2,h3,.font-display{font-family:var(--font-display)}</style>
+</head>
+<body class="antialiased">`
+}
+
+function announcement(depth = 0) {
+  return `<div class="relative overflow-hidden bg-gradient-to-r from-primary via-[#b8330e] to-primary text-primary-foreground">
+<div class="container relative flex items-center justify-center gap-3 py-2 text-xs sm:text-sm">
+<span class="font-semibold">Türkiye'nin her yerine kargo!</span>
+<span class="hidden sm:inline opacity-90">81 il'e güvenli teslimat</span>
+<a href="${wa('Merhaba, Kayseri dışından kargo ile sineklik almak istiyorum.')}" target="_blank" rel="noreferrer" class="underline font-semibold">WhatsApp'tan sipariş ver →</a>
+</div></div>`
+}
+
+function header(depth = 0) {
+  const p = depth ? '../'.repeat(depth) : ''
+  const pl = (href) => (depth ? p + href.replace(/^\//, '') : href)
+  const productLinks = products.map(pr =>
+    `<a href="${pl(`urunler/${pr.slug}.html`)}" class="block px-3 py-2 rounded-lg hover:bg-muted text-sm">${esc(pr.name)}</a>`
+  ).join('')
+  return `<header class="sticky top-0 z-40 w-full border-b border-border/60 bg-background/90 backdrop-blur">
+<div class="container flex h-16 items-center justify-between gap-4">
+<a href="${pl('index.html')}" class="flex items-center gap-2">
+<img src="${p}logo.svg" alt="${esc(site.name)}" class="h-9 w-auto max-w-[140px] object-contain" width="140" height="36"/>
+<div class="hidden sm:flex flex-col leading-tight"><span class="font-bold">${esc(site.name)}</span><span class="text-[10px] text-muted-foreground">${esc(site.company)}</span></div>
+</a>
+<nav class="hidden lg:flex items-center gap-1">
+<a href="${pl('index.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">Anasayfa</a>
+<div class="relative group">
+<a href="${pl('urunler.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">Ürünler</a>
+<div class="absolute left-0 top-full pt-2 w-72 hidden group-hover:block"><div class="rounded-xl border bg-card shadow-lg p-2">${productLinks}</div></div>
+</div>
+<a href="${pl('sineklik-fiyatlari.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">Fiyatlar</a>
+<a href="${pl('sineklik-montaji.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">Montaj</a>
+<a href="${pl('blog.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">Blog</a>
+<a href="${pl('hakkimizda.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">Hakkımızda</a>
+<a href="${pl('iletisim.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">İletişim</a>
+</nav>
+<a href="tel:${site.phoneIntl}" class="hidden md:flex items-center gap-2 text-sm font-semibold">${esc(site.phone)}</a>
+<button type="button" id="menu-btn" class="lg:hidden p-2 rounded-md hover:bg-muted" aria-label="Menü">☰</button>
+</div>
+<div id="mobile-menu" class="lg:hidden hidden border-t bg-background"><div class="container py-3 flex flex-col gap-1">
+<a href="${pl('index.html')}" class="px-3 py-2 rounded-md hover:bg-muted text-sm">Anasayfa</a>
+<a href="${pl('urunler.html')}" class="px-3 py-2 rounded-md hover:bg-muted text-sm">Ürünler</a>
+<a href="${pl('sineklik-fiyatlari.html')}" class="px-3 py-2 rounded-md hover:bg-muted text-sm">Fiyatlar</a>
+<a href="${pl('iletisim.html')}" class="px-3 py-2 rounded-md hover:bg-muted text-sm">İletişim</a>
+</div></div>
+</header>`
+}
+
+function footer(depth = 0) {
+  const p = depth ? '../'.repeat(depth) : ''
+  const pl = (href) => (depth ? p + href.replace(/^\//, '') : href)
+  return `<footer class="mt-20 border-t border-border bg-muted/30">
+<div class="container py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+<div><img src="${p}logo.svg" alt="${esc(site.name)}" class="h-10 w-auto max-w-[160px] object-contain"/><p class="mt-4 text-sm text-muted-foreground">${esc(site.slogans[0])}</p></div>
+<div><h4 class="font-semibold mb-3">Ürünler</h4><ul class="space-y-2 text-sm">${products.map(pr => `<li><a href="${pl(`urunler/${pr.slug}.html`)}" class="text-muted-foreground hover:text-primary">${esc(pr.name)}</a></li>`).join('')}</ul></div>
+<div><h4 class="font-semibold mb-3">Kurumsal</h4><ul class="space-y-2 text-sm">
+<li><a href="${pl('hakkimizda.html')}" class="text-muted-foreground hover:text-primary">Hakkımızda</a></li>
+<li><a href="${pl('sineklik-fiyatlari.html')}" class="text-muted-foreground hover:text-primary">Fiyatlar</a></li>
+<li><a href="${pl('iletisim.html')}" class="text-muted-foreground hover:text-primary">İletişim</a></li>
+</ul></div>
+<div><h4 class="font-semibold mb-3">İletişim</h4>
+<p class="text-sm text-muted-foreground">${esc(site.address.full)}</p>
+<p class="text-sm mt-2"><a href="tel:${site.phoneIntl}">${esc(site.phone)}</a></p>
+<p class="text-sm"><a href="mailto:${site.email}">${esc(site.email)}</a></p>
+</div></div>
+<div class="border-t"><div class="container py-4 text-xs text-muted-foreground">© ${new Date().getFullYear()} ${esc(site.name)}</div></div>
+</footer>
+<a href="${wa()}" target="_blank" rel="noreferrer" class="fixed bottom-5 right-5 z-50 h-14 w-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg text-2xl" aria-label="WhatsApp">💬</a>
+<script src="${p}assets/js/site.js"></script>
+<script>window.SITE_CONFIG=${JSON.stringify({ pricingApi: site.pricingApi || 'https://admin.kayserisineklik.com.tr/api/pricing.php', formContact: '/api/contact.php', formQuote: '/api/quote.php', products: products.map(p=>({slug:p.slug,name:p.name,pricePerM2:p.pricePerM2,minPrice:p.minPrice,options:p.options,selectionType:p.selectionType})) })};</script>
+</body></html>`
+}
+
+function layout({ title, description, canonical, body, jsonLdData, depth = 0 }) {
+  return `${head({ title, description, canonical, depth })}
+${jsonLdData ? jsonLd(jsonLdData) : ''}
+${announcement(depth)}
+${header(depth)}
+<main class="min-h-[60vh]">${body}</main>
+${footer(depth)}`
+}
+
+function write(rel, html) {
+  const file = path.join(OUT, rel)
+  fs.mkdirSync(path.dirname(file), { recursive: true })
+  fs.writeFileSync(file, html, 'utf8')
+  console.log('  ', rel)
+}
+
+function copyDir(src, dest) {
+  fs.mkdirSync(dest, { recursive: true })
+  for (const e of fs.readdirSync(src, { withFileTypes: true })) {
+    const s = path.join(src, e.name)
+    const d = path.join(dest, e.name)
+    if (e.name === '.env' || e.name === 'data') continue
+    if (e.isDirectory()) copyDir(s, d)
+    else fs.copyFileSync(s, d)
+  }
+}
+
+function copyAssets() {
+  fs.mkdirSync(path.join(OUT, 'assets/css'), { recursive: true })
+  fs.copyFileSync(path.join(ROOT, 'assets/css/site.css'), path.join(OUT, 'assets/css/site.css'))
+  fs.copyFileSync(path.join(ROOT, 'public/site-fallback.css'), path.join(OUT, 'assets/css/site-fallback.css'))
+  fs.copyFileSync(path.join(ROOT, 'public/logo.svg'), path.join(OUT, 'logo.svg'))
+  fs.mkdirSync(path.join(OUT, 'assets/js'), { recursive: true })
+  fs.copyFileSync(path.join(__dirname, 'assets/site.js'), path.join(OUT, 'assets/js/site.js'))
+  copyDir(path.join(ROOT, 'public/api'), path.join(OUT, 'api'))
+  fs.copyFileSync(path.join(ROOT, 'public/.htaccess'), path.join(OUT, '.htaccess'))
+  writeSeoFiles()
+}
+
+function writeSeoFiles() {
+  const now = new Date().toISOString()
+  const urls = [
+    { loc: `${site.url}/`, priority: '1.0' },
+    { loc: `${site.url}/urunler`, priority: '0.9' },
+    { loc: `${site.url}/sineklik-fiyatlari`, priority: '0.9' },
+    { loc: `${site.url}/sineklik-montaji`, priority: '0.8' },
+    { loc: `${site.url}/blog`, priority: '0.8' },
+    { loc: `${site.url}/hakkimizda`, priority: '0.7' },
+    { loc: `${site.url}/iletisim`, priority: '0.8' },
+    ...products.map(p => ({ loc: `${site.url}/urunler/${p.slug}`, priority: '0.9' })),
+    ...blogPosts.map(b => ({ loc: `${site.url}/blog/${b.slug}`, priority: '0.7' })),
+  ]
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(u => `  <url><loc>${u.loc}</loc><lastmod>${now}</lastmod><priority>${u.priority}</priority></url>`).join('\n')}
+</urlset>`
+  fs.writeFileSync(path.join(OUT, 'sitemap.xml'), sitemap, 'utf8')
+  fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${site.url}/sitemap.xml\n`, 'utf8')
+}
+
+function copyAdmin() {
+  if (fs.existsSync(ADMIN_OUT)) fs.rmSync(ADMIN_OUT, { recursive: true, force: true })
+  copyDir(path.join(ROOT, 'admin'), ADMIN_OUT)
+}
+
+function pageHome() {
+  const cards = products.map(p => `<a href="urunler/${p.slug}.html" class="group rounded-3xl overflow-hidden bg-card border border-border hover:border-primary/40 block">
+<div class="aspect-[4/5] relative overflow-hidden"><img src="${esc(p.image)}" alt="${esc(p.name)}" class="h-full w-full object-cover"/>
+<span class="absolute top-3 right-3 px-2 py-1 text-[10px] font-bold bg-primary text-primary-foreground rounded-full price-badge" data-slug="${p.slug}">₺${p.pricePerM2}/m² + KDV</span></div>
+<div class="p-5"><h3 class="font-display font-bold text-xl">${esc(p.name)}</h3><p class="text-sm text-muted-foreground mt-2">${esc(p.tagline)}</p></div></a>`).join('')
+  const blogs = blogPosts.slice(0, 3).map(b => `<a href="blog/${b.slug}.html" class="group rounded-3xl overflow-hidden bg-card border block">
+<div class="aspect-[16/10] overflow-hidden"><img src="${esc(b.cover)}" alt="" class="h-full w-full object-cover"/></div>
+<div class="p-5"><h3 class="font-display font-bold text-lg">${esc(b.title)}</h3><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
+  write('index.html', layout({
+    title: `${site.name} | Plise, Menteşeli ve Sürgülü Sineklik`,
+    description: site.description,
+    canonical: '/',
+    body: `<section class="warm-hero"><div class="container py-14 md:py-24 grid lg:grid-cols-2 gap-10 items-center">
+<div><h1 class="text-4xl md:text-6xl font-bold leading-tight">Sinek girmesin, <span class="text-primary ink-underline">içeri ferahlık</span> girsin.</h1>
+<p class="mt-6 text-lg text-foreground/75">${esc(site.description)}</p>
+<div class="mt-8 flex flex-wrap gap-3">
+<a href="${wa()}" class="inline-flex items-center px-7 py-3 rounded-full bg-[#25D366] text-white font-semibold">WhatsApp'tan Teklif Al</a>
+<a href="tel:${site.phoneIntl}" class="inline-flex items-center px-6 py-3 rounded-full border font-semibold">${esc(site.phone)}</a>
+</div></div>
+<div class="rounded-3xl overflow-hidden frame-card"><img src="${esc(products[1].image)}" alt="" class="w-full aspect-[4/3] object-cover"/></div>
+</div></section>
+<section class="container py-16"><h2 class="text-3xl font-bold mb-8">Koleksiyon</h2><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">${cards}</div></section>
+<section class="container py-10"><div class="grid md:grid-cols-3 gap-5">${blogs}</div></section>`
+  }))
+}
+
+function pageProducts() {
+  const grid = products.map(p => `<a href="${p.slug}.html" class="rounded-2xl overflow-hidden bg-card border block">
+<img src="${esc(p.image)}" alt="" class="aspect-[4/3] object-cover w-full"/>
+<div class="p-4"><h2 class="font-semibold">${esc(p.name)}</h2><p class="text-sm text-muted-foreground">${esc(p.tagline)}</p>
+<span class="text-sm font-semibold text-primary price-badge" data-slug="${p.slug}">₺${p.pricePerM2}/m² + KDV</span></div></a>`).join('')
+  write('urunler.html', layout({ title: 'Sineklik Modelleri', description: '8 sineklik modeli', canonical: '/urunler', body: `<section class="hero-gradient"><div class="container py-12"><h1 class="text-4xl font-extrabold">Sineklik Modelleri</h1></div></section><section class="container py-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">${grid}</section>` }))
+}
+
+function pageProduct(p) {
+  const opts = p.options.map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('')
+  const others = products.filter(x => x.slug !== p.slug).slice(0, 4).map(o =>
+    `<a href="${o.slug}.html" class="rounded-xl border bg-card block overflow-hidden"><img src="${esc(o.image)}" class="aspect-[4/3] object-cover w-full"/><div class="p-3 text-sm font-semibold">${esc(o.name)}</div></a>`
+  ).join('')
+  write(`urunler/${p.slug}.html`, layout({
+    title: `${p.name} Fiyatları`,
+    description: p.tagline,
+    canonical: `/urunler/${p.slug}`,
+    depth: 1,
+    body: `<div class="container pt-4 text-xs text-muted-foreground"><a href="../index.html">Anasayfa</a> › <a href="../urunler.html">Ürünler</a> › ${esc(p.name)}</div>
+<section class="container py-8 grid lg:grid-cols-2 gap-8">
+<div><img src="${esc(p.image)}" alt="" class="rounded-2xl border aspect-square object-cover w-full"/>
+<h1 class="mt-5 text-3xl font-extrabold">${esc(p.name)} Fiyatları</h1>
+<p class="text-muted-foreground mt-2">${esc(p.tagline)}</p>
+<ul class="mt-4 space-y-2">${p.features.map(f => `<li class="text-sm">✓ ${esc(f)}</li>`).join('')}</ul></div>
+<div class="lg:sticky lg:top-20 h-fit rounded-2xl border bg-card p-6" id="calculator" data-slug="${p.slug}" data-name="${esc(p.name)}">
+<h2 class="font-semibold text-primary">Anlık Fiyat Hesaplayıcı</h2>
+<div class="mt-4 grid grid-cols-2 gap-3"><div><label class="text-xs">Genişlik (cm)</label><input type="number" id="calc-w" value="100" min="20" max="400" class="w-full mt-1 px-3 py-2 border rounded-md"/></div>
+<div><label class="text-xs">Yükseklik (cm)</label><input type="number" id="calc-h" value="120" min="20" max="400" class="w-full mt-1 px-3 py-2 border rounded-md"/></div></div>
+<div class="mt-3"><label class="text-xs">${p.selectionType === 'color' ? 'Renk' : 'Açılım'}</label><select id="calc-opt" class="w-full mt-1 px-3 py-2 border rounded-md">${opts}</select></div>
+<div class="mt-5 p-4 rounded-lg bg-primary/10"><div class="text-xs text-muted-foreground">Yaklaşık Fiyat (KDV dahil)</div><div class="text-3xl font-extrabold" id="calc-price">—</div><div class="text-xs text-muted-foreground" id="calc-detail"></div></div>
+<a id="calc-wa" href="${wa()}" target="_blank" class="mt-4 block text-center py-3 rounded-md bg-[#25D366] text-white font-semibold">WhatsApp'tan Teklif Al</a>
+<button type="button" id="quote-open" class="mt-2 w-full py-3 rounded-md border border-primary text-primary font-semibold">Form ile Teklif İste</button>
+</div></section>
+<section class="container pb-12"><h2 class="text-xl font-bold mb-4">Diğer Modeller</h2><div class="grid grid-cols-2 md:grid-cols-4 gap-3">${others}</div></section>
+<div id="quote-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"><div class="bg-card rounded-xl p-6 max-w-md w-full">
+<h3 class="font-bold text-lg">Teklif İste</h3>
+<form id="quote-form" class="mt-4 space-y-3"><input type="text" name="website" class="hidden" tabindex="-1"/>
+<input name="name" required placeholder="Ad Soyad *" class="w-full px-3 py-2 border rounded-md"/>
+<input name="phone" required placeholder="Telefon *" class="w-full px-3 py-2 border rounded-md"/>
+<input name="email" type="email" placeholder="E-posta" class="w-full px-3 py-2 border rounded-md"/>
+<textarea name="note" rows="3" placeholder="Not" class="w-full px-3 py-2 border rounded-md"></textarea>
+<button type="submit" class="w-full py-3 bg-primary text-primary-foreground rounded-md font-semibold">Gönder</button>
+<button type="button" id="quote-close" class="w-full py-2 text-sm text-muted-foreground">Kapat</button></form></div></div>`
+  }))
+}
+
+function pagePrices() {
+  write('sineklik-fiyatlari.html', layout({
+    title: 'Sineklik Fiyatları 2026',
+    description: 'm² birim fiyat listesi',
+    canonical: '/sineklik-fiyatlari',
+    body: `<section class="hero-gradient"><div class="container py-12"><h1 class="text-4xl font-extrabold">Sineklik Fiyatları 2026</h1>
+<p class="mt-2 text-muted-foreground">Tablo KDV hariç; hesaplayıcı KDV dahil.</p></div></section>
+<section class="container py-8"><div id="prices-table" class="rounded-2xl border overflow-hidden"><p class="p-4 text-muted-foreground">Fiyatlar yükleniyor…</p></div></section>`
+  }))
+}
+
+function pageContact() {
+  write('iletisim.html', layout({
+    title: 'İletişim',
+    description: 'Bize ulaşın',
+    canonical: '/iletisim',
+    body: `<section class="hero-gradient"><div class="container py-12"><h1 class="text-4xl font-extrabold">İletişim</h1></div></section>
+<section class="container py-10 grid lg:grid-cols-2 gap-8">
+<div class="space-y-4"><div class="rounded-xl border bg-card p-5"><strong>Adres</strong><p class="text-sm text-muted-foreground mt-1">${esc(site.address.full)}</p></div>
+<a href="tel:${site.phoneIntl}" class="block rounded-xl border bg-card p-5"><strong>Telefon</strong><p>${esc(site.phone)}</p></a>
+<a href="mailto:${site.email}" class="block rounded-xl border bg-card p-5"><strong>E-posta</strong><p>${esc(site.email)}</p></a>
+<iframe src="https://www.google.com/maps?q=Fevzi+%C3%87akmak,+Fuzuli+Cd.+No:63,+38020+Kocasinan/Kayseri&output=embed" class="w-full h-64 rounded-xl border" loading="lazy" title="Konum"></iframe></div>
+<div><h2 class="text-xl font-bold mb-3">Bize Yazın</h2>
+<form id="contact-form" class="space-y-3 rounded-xl border bg-card p-5"><input type="text" name="website" class="hidden" tabindex="-1"/>
+<input name="name" required placeholder="Ad Soyad *" class="w-full px-3 py-2 border rounded-md"/>
+<input name="phone" required placeholder="Telefon *" class="w-full px-3 py-2 border rounded-md"/>
+<input name="email" type="email" placeholder="E-posta" class="w-full px-3 py-2 border rounded-md"/>
+<input name="subject" placeholder="Konu" class="w-full px-3 py-2 border rounded-md"/>
+<textarea name="message" rows="4" placeholder="Mesaj" class="w-full px-3 py-2 border rounded-md"></textarea>
+<button type="submit" class="w-full py-3 bg-primary text-primary-foreground rounded-md font-semibold">Gönder</button>
+<p id="contact-msg" class="text-sm hidden"></p></form></div></section>`
+  }))
+}
+
+function pageStatic(name, title, h1, content) {
+  write(`${name}.html`, layout({ title, description: h1, canonical: `/${name}`, body: `<section class="hero-gradient"><div class="container py-12"><h1 class="text-4xl font-extrabold">${h1}</h1></div></section><section class="container py-10 prose max-w-none">${content}</section>` }))
+}
+
+function pageBlogList() {
+  const cards = blogPosts.map(b => `<a href="${b.slug}.html" class="rounded-2xl border bg-card overflow-hidden block">
+<img src="${esc(b.cover)}" class="aspect-[16/10] object-cover w-full"/><div class="p-5"><h2 class="font-bold">${esc(b.title)}</h2><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
+  write('blog.html', layout({ title: 'Blog', description: 'Sineklik rehberi', canonical: '/blog', body: `<section class="hero-gradient"><div class="container py-12"><h1 class="text-4xl font-extrabold">Sineklik Rehberi</h1></div></section><section class="container py-8 grid md:grid-cols-2 lg:grid-cols-3 gap-5">${cards}</section>` }))
+}
+
+function pageBlogPost(b) {
+  const sections = b.content.map(c => `<h2 class="text-xl font-bold mt-8">${esc(c.h)}</h2><p class="text-muted-foreground mt-2">${esc(c.p)}</p>`).join('')
+  write(`blog/${b.slug}.html`, layout({
+    title: b.title,
+    description: b.description,
+    canonical: `/blog/${b.slug}`,
+    depth: 1,
+    body: `<article class="container py-10 max-w-3xl"><div class="text-xs text-muted-foreground mb-4"><a href="../blog.html">Blog</a></div>
+<h1 class="text-3xl font-extrabold">${esc(b.title)}</h1><p class="mt-3 text-lg text-muted-foreground">${esc(b.description)}</p>
+<img src="${esc(b.cover)}" alt="" class="mt-6 rounded-2xl w-full aspect-video object-cover"/>${sections}</article>`
+  }))
+}
+
+function page404() {
+  write('404.html', layout({ title: 'Sayfa bulunamadı', description: '404', canonical: '/404', body: `<section class="container py-24 text-center"><h1 class="text-4xl font-bold">404</h1><p class="mt-4 text-muted-foreground">Aradığınız sayfa bulunamadı.</p><a href="index.html" class="inline-block mt-6 text-primary font-semibold">Anasayfa</a></section>` }))
+}
+
+console.log('Saf HTML build →', OUT)
+if (fs.existsSync(OUT)) fs.rmSync(OUT, { recursive: true, force: true })
+copyAssets()
+copyAdmin()
+pageHome()
+pageProducts()
+products.forEach(pageProduct)
+pagePrices()
+pageContact()
+pageStatic('hakkimizda', 'Hakkımızda', 'Hakkımızda', `<p>${esc(site.company)} – Kayseri ve çevresinde sineklik üretim, satış ve montaj hizmeti.</p><p class="mt-4 text-muted-foreground">10+ yıl deneyim, 5.000+ montaj, %98 müşteri memnuniyeti.</p>`)
+pageStatic('sineklik-montaji', 'Sineklik Montajı', 'Sineklik Montajı', `<p>Kayseri ve çevresinde profesyonel montaj. Ücretsiz keşif, 2 yıl garanti.</p><ol class="mt-6 space-y-4 list-decimal pl-5"><li>İletişim & randevu</li><li>Ücretsiz keşif & ölçü</li><li>Ölçüye özel üretim (1-3 gün)</li><li>Profesyonel montaj</li><li>2 yıl garanti</li></ol><a href="${wa('Sineklik montajı için randevu almak istiyorum.')}" class="inline-block mt-8 px-6 py-3 rounded-full bg-primary text-primary-foreground font-semibold">WhatsApp Randevu</a>`)
+pageBlogList()
+blogPosts.forEach(pageBlogPost)
+page404()
+console.log('Tamam! Hostinger: 1-CANLI-SITE içeriğini public_html\'e at.')

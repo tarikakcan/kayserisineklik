@@ -1,0 +1,21 @@
+# Ortam dosyaları (asla commit etme)
+.env
+.env.*
+**/.env
+**/.env.local
+
+# Zip çıktıları
+*.zip
+
+# IDE
+.idea/
+.vscode/
+
+# Sistem
+.DS_Store
+Thumbs.db
+
+# Eski Next.js kalıntıları (bu repo saf HTML)
+node_modules/
+.next/
+out/
