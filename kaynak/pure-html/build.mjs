@@ -219,7 +219,7 @@ function pageHome() {
 }
 
 function pageProducts() {
-  const grid = products.map(p => `<a href="${p.slug}.html" class="rounded-2xl overflow-hidden bg-card border block">
+  const grid = products.map(p => `<a href="urunler/${p.slug}.html" class="rounded-2xl overflow-hidden bg-card border block">
 <img src="${esc(p.image)}" alt="" class="aspect-[4/3] object-cover w-full"/>
 <div class="p-4"><h2 class="font-semibold">${esc(p.name)}</h2><p class="text-sm text-muted-foreground">${esc(p.tagline)}</p>
 <span class="text-sm font-semibold text-primary price-badge" data-slug="${p.slug}">₺${p.pricePerM2}/m² + KDV</span></div></a>`).join('')
@@ -303,7 +303,7 @@ function pageStatic(name, title, h1, content) {
 }
 
 function pageBlogList() {
-  const cards = blogPosts.map(b => `<a href="${b.slug}.html" class="rounded-2xl border bg-card overflow-hidden block">
+  const cards = blogPosts.map(b => `<a href="blog/${b.slug}.html" class="rounded-2xl border bg-card overflow-hidden block">
 <img src="${esc(b.cover)}" class="aspect-[16/10] object-cover w-full"/><div class="p-5"><h2 class="font-bold">${esc(b.title)}</h2><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
   write('blog.html', layout({ title: 'Blog', description: 'Sineklik rehberi', canonical: '/blog', body: `<section class="hero-gradient"><div class="container py-12"><h1 class="text-4xl font-extrabold">Sineklik Rehberi</h1></div></section><section class="container py-8 grid md:grid-cols-2 lg:grid-cols-3 gap-5">${cards}</section>` }))
 }
@@ -340,4 +340,4 @@ pageBlogList()
 blogPosts.forEach(pageBlogPost)
 page404()
 syncAdminIntoLive()
-console.log('Tamam! Hostinger Git: live branch → public_html (api/ + admin/ dahil)')
+console.log('Tamam! npm run deploy:github → GitHub main (canlı)')
