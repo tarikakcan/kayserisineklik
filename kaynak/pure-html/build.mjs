@@ -84,7 +84,7 @@ function header(depth = 0) {
 <a href="${pl('hakkimizda.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">Hakkımızda</a>
 <a href="${pl('iletisim.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">İletişim</a>
 </nav>
-<a href="${wa()}" target="_blank" rel="noreferrer" class="hidden md:flex items-center gap-2 text-sm font-semibold text-[#25D366] hover:underline">${waIconSvg.replace('h-7 w-7', 'h-5 w-5')} ${esc(site.phone)}</a>
+<a href="${wa()}" target="_blank" rel="noreferrer" class="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-[#25D366] whitespace-nowrap shrink-0">${waIconSvg.replace('h-7 w-7', 'h-4 w-4')}<span>${esc(site.phone)}</span></a>
 <button type="button" id="menu-btn" class="lg:hidden p-2 rounded-md hover:bg-muted" aria-label="Menü">☰</button>
 </div>
 <div id="mobile-menu" class="lg:hidden hidden border-t bg-background"><div class="container py-3 flex flex-col gap-1">
@@ -117,8 +117,8 @@ function footer(depth = 0) {
 <div class="border-t"><div class="container py-4 text-xs text-muted-foreground">© ${new Date().getFullYear()} ${esc(site.name)}</div></div>
 </footer>
 ${whatsappFab()}
-<script src="${p}assets/js/site.js"></script>
 <script>window.SITE_CONFIG=${JSON.stringify({ whatsappNumber: site.whatsappNumber, pricingApi: site.pricingApi || 'https://admin.kayserisineklik.com.tr/api/pricing.php', formContact: '/api/contact.php', formQuote: '/api/quote.php', products: products.map(p=>({slug:p.slug,name:p.name,pricePerM2:p.pricePerM2,minPrice:p.minPrice,options:p.options,selectionType:p.selectionType})) })};</script>
+<script src="${p}assets/js/site.js"></script>
 </body></html>`
 }
 
@@ -244,19 +244,24 @@ function pageProduct(p) {
     canonical: `/urunler/${p.slug}`,
     depth: 1,
     body: `<div class="container pt-4 text-xs text-muted-foreground"><a href="../index.html">Anasayfa</a> › <a href="../urunler.html">Ürünler</a> › ${esc(p.name)}</div>
-<section class="container py-8 grid lg:grid-cols-2 gap-8">
-<div><img src="${esc(p.image)}" alt="" class="rounded-2xl border aspect-square object-cover w-full"/>
+<section class="container py-8">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+<div class="min-w-0"><img src="${esc(p.image)}" alt="${esc(p.name)}" class="rounded-2xl border aspect-square object-cover w-full max-w-full"/>
 <h1 class="mt-5 text-3xl font-extrabold">${esc(p.name)} Fiyatları</h1>
 <p class="text-muted-foreground mt-2">${esc(p.tagline)}</p>
 <ul class="mt-4 space-y-2">${p.features.map(f => `<li class="text-sm">✓ ${esc(f)}</li>`).join('')}</ul></div>
-<div class="lg:sticky lg:top-20 h-fit rounded-2xl border bg-card p-6" id="calculator" data-slug="${p.slug}" data-name="${esc(p.name)}">
-<h2 class="font-semibold text-primary">Anlık Fiyat Hesaplayıcı</h2>
-<div class="mt-4 grid grid-cols-2 gap-3"><div><label class="text-xs">Genişlik (cm)</label><input type="number" id="calc-w" value="100" min="20" max="400" class="w-full mt-1 px-3 py-2 border rounded-md"/></div>
-<div><label class="text-xs">Yükseklik (cm)</label><input type="number" id="calc-h" value="120" min="20" max="400" class="w-full mt-1 px-3 py-2 border rounded-md"/></div></div>
-<div class="mt-3"><label class="text-xs">${p.selectionType === 'color' ? 'Renk' : 'Açılım'}</label><select id="calc-opt" class="w-full mt-1 px-3 py-2 border rounded-md">${opts}</select></div>
-<div class="mt-5 p-4 rounded-lg bg-primary/10"><div class="text-xs text-muted-foreground">Yaklaşık Fiyat (KDV dahil)</div><div class="text-3xl font-extrabold" id="calc-price">—</div><div class="text-xs text-muted-foreground" id="calc-detail"></div></div>
-<a id="calc-wa" href="${wa()}" target="_blank" class="mt-4 block text-center py-3 rounded-md bg-[#25D366] text-white font-semibold">WhatsApp'tan Teklif Al</a>
-<button type="button" id="quote-open" class="mt-2 w-full py-3 rounded-md border border-primary text-primary font-semibold">Form ile Teklif İste</button>
+<aside class="min-w-0 w-full lg:sticky lg:top-24 rounded-2xl border bg-card p-6 shadow-sm" id="calculator" data-slug="${p.slug}" data-name="${esc(p.name)}">
+<h2 class="font-semibold text-primary text-lg">Anlık Fiyat Hesaplayıcı</h2>
+<div class="mt-4 space-y-4">
+<div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-medium">Genişlik (cm)</label><input type="number" id="calc-w" value="100" min="20" max="400" class="w-full mt-1 px-3 py-2 border border-border rounded-md bg-background"/></div>
+<div><label class="text-xs font-medium">Yükseklik (cm)</label><input type="number" id="calc-h" value="120" min="20" max="400" class="w-full mt-1 px-3 py-2 border border-border rounded-md bg-background"/></div></div>
+<div><label class="text-xs font-medium">${p.selectionType === 'color' ? 'Renk' : 'Açılım'}</label><select id="calc-opt" class="w-full mt-1 px-3 py-2 border border-border rounded-md bg-background">${opts}</select></div>
+<button type="button" id="calc-btn" class="w-full py-3 rounded-md bg-primary text-primary-foreground font-semibold hover:opacity-90">Fiyat Hesapla</button>
+<div class="p-4 rounded-lg bg-primary/10 border border-primary/15"><div class="text-xs text-muted-foreground">Yaklaşık Fiyat (KDV dahil)</div><div class="text-3xl font-extrabold text-primary mt-1" id="calc-price">—</div><div class="text-xs text-muted-foreground mt-1" id="calc-detail"></div></div>
+<div class="space-y-2 pt-1">
+<a id="calc-wa" href="${wa()}" target="_blank" rel="noreferrer" class="block w-full text-center py-3 rounded-md bg-[#25D366] text-white font-semibold hover:bg-[#20bd5a]">WhatsApp'tan Teklif Al</a>
+<button type="button" id="quote-open" class="w-full py-3 rounded-md border border-primary text-primary font-semibold hover:bg-primary/5">Form ile Teklif İste</button>
+</div></div></aside>
 </div></section>
 <section class="container pb-12"><h2 class="text-xl font-bold mb-4">Diğer Modeller</h2><div class="grid grid-cols-2 md:grid-cols-4 gap-3">${others}</div></section>
 <div id="quote-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"><div class="bg-card rounded-xl p-6 max-w-md w-full">

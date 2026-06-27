@@ -21,3 +21,18 @@ main img:not([class*="aspect"]) {
   max-height: 70vh;
   object-fit: cover;
 }
+
+#calculator input,
+#calculator select,
+#calculator button {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+#calculator .space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+#calculator .space-y-2 > * + * {
+  margin-top: 0.5rem;
+}

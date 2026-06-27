@@ -8,24 +8,45 @@
   function $(sel, root) { return (root || document).querySelector(sel) }
   function $$(sel, root) { return [...(root || document).querySelectorAll(sel)] }
 
-  function formatTry(n) { return Number(n).toLocaleString('tr-TR') }
+  function formatTry(n) {
+    const x = Number(n)
+    if (!Number.isFinite(x)) return '—'
+    return x.toLocaleString('tr-TR')
+  }
+
+  function productFallback(slug) {
+    const p = (CFG.products || []).find(x => x.slug === slug)
+    return {
+      birim_m2_fiyati: Number(p?.pricePerM2) || 0,
+      minimum_fiyat: Number(p?.minPrice) || 0,
+      kdv_orani: DEFAULT_KDV,
+    }
+  }
+
+  function normalizeRow(slug, map) {
+    const raw = map?.[slug] || {}
+    const fb = productFallback(slug)
+    return {
+      birim_m2_fiyati: Number(raw.birim_m2_fiyati ?? fb.birim_m2_fiyati) || fb.birim_m2_fiyati,
+      minimum_fiyat: Number(raw.minimum_fiyat ?? fb.minimum_fiyat) || fb.minimum_fiyat,
+      kdv_orani: Number(raw.kdv_orani ?? fb.kdv_orani) || DEFAULT_KDV,
+    }
+  }
 
   function calcPrice(w, h, row) {
-    const area = Math.max(0, w) * Math.max(0, h) / 10000
-    const ham = Math.max(area * row.birim_m2_fiyati, row.minimum_fiyat)
-    const price = Math.round(ham * (1 + (row.kdv_orani ?? DEFAULT_KDV)))
-    return { area, price, ham, perM2: row.birim_m2_fiyati }
+    const birim = Number(row.birim_m2_fiyati) || 0
+    const min = Number(row.minimum_fiyat) || 0
+    const kdv = Number(row.kdv_orani ?? DEFAULT_KDV) || DEFAULT_KDV
+    const area = Math.max(0, Number(w) || 0) * Math.max(0, Number(h) || 0) / 10000
+    const ham = Math.max(area * birim, min)
+    const price = Math.round(ham * (1 + kdv))
+    return { area, price, ham, perM2: birim }
   }
 
   function fallbackMap() {
     const map = {}
     for (const p of CFG.products || []) {
-      map[p.slug] = {
-        id: p.slug,
-        birim_m2_fiyati: p.pricePerM2,
-        minimum_fiyat: p.minPrice,
-        kdv_orani: DEFAULT_KDV,
-      }
+      map[p.slug] = { id: p.slug, ...productFallback(p.slug) }
     }
     return map
   }
@@ -73,8 +94,8 @@
     const map = await fetchPricing()
     $$('.price-badge').forEach(el => {
       const slug = el.dataset.slug
-      const row = map[slug] || fallbackMap()[slug]
-      if (row) el.textContent = `₺${formatTry(row.birim_m2_fiyati)}/m² + KDV`
+      const row = normalizeRow(slug, map)
+      if (row.birim_m2_fiyati) el.textContent = `₺${formatTry(row.birim_m2_fiyati)}/m² + KDV`
     })
   }
 
@@ -84,7 +105,7 @@
     if (!wrap) return
     const map = await fetchPricing()
     const rows = (CFG.products || []).map(p => {
-      const row = map[p.slug] || { birim_m2_fiyati: p.pricePerM2, minimum_fiyat: p.minPrice }
+      const row = normalizeRow(p.slug, map)
       return `<tr class="border-b"><td class="p-3 font-medium">${p.name}</td>
         <td class="p-3 text-right font-semibold text-primary">₺${formatTry(row.birim_m2_fiyati)}</td>
         <td class="p-3 text-right hidden sm:table-cell text-muted-foreground">₺${formatTry(row.minimum_fiyat)}</td>
@@ -100,35 +121,44 @@
     const box = $('#calculator')
     if (!box) return
     const slug = box.dataset.slug
-    const name = box.dataset.name
-    const map = await fetchPricing()
-    const fb = (CFG.products || []).find(p => p.slug === slug)
-    const row = map[slug] || {
-      birim_m2_fiyati: fb?.pricePerM2,
-      minimum_fiyat: fb?.minPrice,
-      kdv_orani: DEFAULT_KDV,
-    }
-
+    const name = box.dataset.name || ''
     const wEl = $('#calc-w', box)
     const hEl = $('#calc-h', box)
     const optEl = $('#calc-opt', box)
     const priceEl = $('#calc-price', box)
     const detailEl = $('#calc-detail', box)
     const waEl = $('#calc-wa', box)
+    const calcBtn = $('#calc-btn', box)
+    if (!wEl || !hEl || !priceEl) return
+
+    let row = normalizeRow(slug, fallbackMap())
 
     function refresh() {
-      const { area, price, perM2 } = calcPrice(Number(wEl.value), Number(hEl.value), row)
-      priceEl.textContent = `₺${formatTry(price)}`
-      detailEl.textContent = `${area.toFixed(2)} m² × ₺${formatTry(perM2)}/m² (KDV hariç)`
-      const msg = `Merhaba, ${name} için teklif almak istiyorum.\n• Ölçü: ${wEl.value} x ${hEl.value} cm\n• ${optEl.value}\n• Yaklaşık: ₺${formatTry(price)}`
-      const waNum = CFG.whatsappNumber || '905388202036'
-      waEl.href = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`
-      box.dataset.price = String(price)
+      const { area, price, perM2 } = calcPrice(wEl.value, hEl.value, row)
+      priceEl.textContent = price > 0 ? `₺${formatTry(price)}` : '—'
+      detailEl.textContent = perM2 > 0
+        ? `${area.toFixed(2)} m² × ₺${formatTry(perM2)}/m² (KDV hariç)`
+        : 'Ölçü girin ve Fiyat Hesapla\'ya basın'
+      if (waEl) {
+        const msg = `Merhaba, ${name} için teklif almak istiyorum.\n• Ölçü: ${wEl.value} x ${hEl.value} cm\n• ${optEl?.value || ''}\n• Yaklaşık: ₺${formatTry(price)}`
+        const waNum = CFG.whatsappNumber || '905388202036'
+        waEl.href = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`
+      }
+      box.dataset.price = String(price > 0 ? price : '')
     }
+
+    refresh()
+
+    try {
+      const map = await fetchPricing()
+      row = normalizeRow(slug, map)
+      refresh()
+    } catch { /* fallback row already set */ }
+
     wEl.addEventListener('input', refresh)
     hEl.addEventListener('input', refresh)
-    optEl.addEventListener('change', refresh)
-    refresh()
+    if (optEl) optEl.addEventListener('change', refresh)
+    if (calcBtn) calcBtn.addEventListener('click', refresh)
 
     const modal = $('#quote-modal')
     const openBtn = $('#quote-open')
@@ -149,7 +179,7 @@
             product: name,
             width: wEl.value,
             height: hEl.value,
-            option: optEl.value,
+            option: optEl?.value || '',
             price: box.dataset.price,
           })
           alert('Talebiniz alındı!')
@@ -185,9 +215,15 @@
     })
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function boot() {
     updateBadges()
     renderPricesTable()
     initCalculator()
-  })
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot)
+  } else {
+    boot()
+  }
 })()
