@@ -1,55 +1,41 @@
 ---
-description: Hostinger Git deploy — live branch, public_html alt klasörleri api/ ve admin/
+description: GitHub main = sadece canlı site; dev = kaynak kod; Hostinger main çeker
 alwaysApply: true
 ---
 
-# Hostinger Deploy Kuralı
+# GitHub & Hostinger Deploy
 
-## Hostinger Git (tek bağlantı)
+## GitHub branch'leri
 
-Branch: **`live`** → `public_html`
+| Branch | İçerik | Hostinger |
+|--------|--------|-----------|
+| **`main`** | Sadece canlı site dosyaları | ✅ Git → public_html |
+| **`dev`** | Kaynak kod, build script, dokümantasyon | ❌ Deploy edilmez |
 
-Hostinger GitHub'a bağlı; `npm run deploy:github` push edince canlıya yansır.
-
-## Alt alan adları (public_html alt klasörleri)
-
-| URL | Hostinger dizin | live branch yolu |
-|-----|-----------------|------------------|
-| kayserisineklik.com.tr | public_html/ | index.html, assets/, … |
-| api.kayserisineklik.com.tr | public_html/api/ | api/contact.php, api/quote.php |
-| admin.kayserisineklik.com.tr | public_html/admin/ | admin/admin/index.php, admin/api/pricing.php |
-
-`live` branch yapısı:
+## Canlı dosyalar (main branch kökü)
 
 ```
-index.html
-api/          ← formlar (contact, quote)
-admin/        ← fiyat paneli + pricing API
-assets/
-urunler/
-blog/
+index.html, logo.svg, .htaccess
+assets/, api/, admin/, urunler/, blog/
+sitemap.xml, robots.txt
 ```
 
-## Branch'ler
+**ASLA main'de olmamalı:** kaynak/, .git/, 1-CANLI-SITE/, package.json, *.md, .cursor/
 
-| Branch | Amaç |
-|--------|------|
-| `main` | Geliştirme — deploy edilmez |
-| `live` | Hostinger Git — tek canlı kaynak |
+## Deploy komutu
 
-Güncelleme: `npm run deploy:github`
+```powershell
+npm run deploy:github
+```
 
-## ASLA yapma
+Build → force push **main** (canlı) → push **dev** (kaynak) → eski live/admin branch sil
 
-- `main` branch'i Hostinger'a bağlama
-- Proje kökünü (`kaynak/`, md dosyaları) public_html'e yükleme
-- Ayrı `admin` branch (Hostinger alt klasör kullanıyor)
+## Hostinger
 
-## Sunucuda elle (.env Git'e konmaz)
+- Git branch: **`main`**
+- Alt alan adları: `api` → public_html/api/, `admin` → public_html/admin/
+- `.env` sunucuda elle: public_html/api/.env, public_html/admin/.env
 
-- `public_html/api/.env` — SMTP
-- `public_html/admin/.env` — ADMIN_PASS_HASH
+## Geliştirme
 
-## Referans
-
-`DEPLOY.md`, `GIT.md`, `AGENT-NOTLAR.md`
+Yerel branch: **dev**. Değişiklik → `npm run build` → `npm run deploy:github`

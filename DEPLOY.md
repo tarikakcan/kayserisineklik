@@ -1,51 +1,45 @@
-# Kayseri Sineklik — Deploy (Saf HTML)
+# Kayseri Sineklik — Deploy
 
-## Hostinger Git (otomatik canlı)
+## GitHub = sadece canlı dosyalar (`main`)
 
-Hostinger GitHub'a bağlı. Branch **`live`** → `public_html`.
+Hostinger Git → branch **`main`**. Bu branch'te yalnızca `public_html`'e gidecek dosyalar var.
 
 ```powershell
-cd C:\Users\mosta\Desktop\kayserisineklik
 npm run deploy:github
 ```
 
-Build + `live` branch push → Hostinger otomatik çeker.
+Bu komut:
+1. Siteyi build eder
+2. GitHub **`main`** → sadece canlı dosyalar (force push)
+3. GitHub **`dev`** → kaynak kod (geliştirme yedeği)
 
-## Alt alan adları
-
-Hostinger'da alt alan adları `public_html` alt klasörlerine bağlı:
-
-| Alt alan adı | Dizin | İçerik |
-|--------------|-------|--------|
-| (ana domain) | `public_html/` | HTML site |
-| api.kayserisineklik.com.tr | `public_html/api/` | contact.php, quote.php |
-| admin.kayserisineklik.com.tr | `public_html/admin/` | Fiyat paneli + pricing.php |
-
-`live` branch'te hepsi bir arada:
+## Canlı dosya yapısı (main branch)
 
 ```
-public_html/
-├── index.html
-├── api/
-├── admin/
-├── assets/
-├── urunler/
-└── blog/
+index.html
+api/          → api.kayserisineklik.com.tr
+admin/        → admin.kayserisineklik.com.tr
+assets/
+urunler/
+blog/
 ```
 
-## Hostinger Git ayarı
+## Hostinger (bir kez)
 
-- Repo: `https://github.com/tarikakcan/kayserisineklik.git`
-- Branch: **`live`**
-- Path: `public_html`
+1. Git → branch: **`main`**
+2. `public_html` içini temizle (yanlış eski yükleme varsa)
+3. Deploy tetikle
 
-## Sunucuda elle oluştur
+## Sunucuda elle
 
-- `public_html/api/.env` — SMTP (`.env.example`'dan)
-- `public_html/admin/.env` — `ADMIN_PASS_HASH`
+- `public_html/api/.env` — SMTP
+- `public_html/admin/.env` — ADMIN_PASS_HASH
 
-## Geliştirme branch'i
+## Geliştirme
 
-`main` = kaynak kod. Hostinger'a deploy edilmez.
+Kaynak kod `dev` branch'te. Yerel çalışma:
 
-Git akışı: `GIT.md`
+```powershell
+npm run build
+npm run deploy:github
+```

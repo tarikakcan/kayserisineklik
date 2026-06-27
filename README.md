@@ -1,36 +1,35 @@
 # Kayseri Sineklik — Saf HTML
 
-Statik HTML site + PHP admin paneli. Next.js / `_next` yok.
+Statik HTML site + PHP admin. Next.js yok.
 
 **Canlı:** https://kayserisineklik.com.tr
 
-## Hızlı başlangıç
+## Geliştirme (yerel)
 
 ```powershell
 cd C:\Users\mosta\Desktop\kayserisineklik
-npm run build          # 1-CANLI-SITE + 2-ADMIN üret
-npm run zip            # canli-site.zip (opsiyonel)
+npm run build              # 1-CANLI-SITE üret
+npm run deploy:github      # GitHub main = canlı, dev = kaynak
 ```
 
-## Deploy
+## GitHub
 
-- Ana site: `1-CANLI-SITE/` → Hostinger `public_html`
-- Admin: `2-ADMIN/` → admin subdomain
+| Branch | İçerik |
+|--------|--------|
+| `main` | Sadece canlı site — Hostinger bunu çeker |
+| `dev` | Kaynak kod |
 
-Detaylar: [DEPLOY.md](DEPLOY.md)
+## Hostinger
 
-## Git & GitHub
+Git branch: **`main`** → `public_html`
 
-Detaylar: [GIT.md](GIT.md)
+Detay: [DEPLOY.md](DEPLOY.md)
 
-Remote: `https://github.com/tarikakcan/kayserisineklik.git`
-
-## Kaynak dosyalar
+## Kaynak dosyalar (dev branch)
 
 | Dosya | İçerik |
 |-------|--------|
 | `kaynak/lib/site-config.js` | Site bilgileri |
 | `kaynak/lib/products-config.js` | 8 ürün |
-| `kaynak/lib/blog-posts.js` | Blog yazıları |
+| `kaynak/lib/blog-posts.js` | Blog |
 | `kaynak/pure-html/build.mjs` | HTML üretici |
-| `kaynak/pure-html/assets/site.js` | Fiyat, form, menü JS |

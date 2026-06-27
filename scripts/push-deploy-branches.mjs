@@ -1,8 +1,8 @@
 /**
- * Hostinger Git deploy — live branch = public_html tamamı
- *   /           → ana site
- *   /api/       → api.kayserisineklik.com.tr
- *   /admin/     → admin.kayserisineklik.com.tr
+ * GitHub main  = SADECE canlı site (Hostinger public_html)
+ * GitHub dev   = kaynak kod (geliştirme, deploy edilmez)
+ *
+ * Çalıştır: npm run deploy:github
  */
 import fs from 'fs'
 import path from 'path'
@@ -10,9 +10,19 @@ import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
+const PROD_BRANCH = 'main'
+const DEV_BRANCH = 'dev'
 
-function run(cmd, cwd = ROOT) {
-  execSync(cmd, { cwd, stdio: 'inherit', shell: true })
+function run(cmd, cwd = ROOT, quiet = false) {
+  execSync(cmd, { cwd, stdio: quiet ? 'pipe' : 'inherit', shell: true })
+}
+
+function tryRun(cmd) {
+  try {
+    run(cmd, ROOT, true)
+  } catch {
+    /* branch yoksa sorun değil */
+  }
 }
 
 function copyDir(src, dest, skip = new Set()) {
@@ -26,35 +36,52 @@ function copyDir(src, dest, skip = new Set()) {
   }
 }
 
-function pushLiveBranch() {
-  const liveSrc = path.join(ROOT, '1-CANLI-SITE')
-  const tmp = path.join(ROOT, '.deploy-live')
+function pushProductionMain() {
+  const src = path.join(ROOT, '1-CANLI-SITE')
+  const tmp = path.join(ROOT, '.deploy-main')
   if (fs.existsSync(tmp)) fs.rmSync(tmp, { recursive: true, force: true })
 
-  copyDir(liveSrc, tmp, new Set(['.env', '.git']))
+  copyDir(src, tmp, new Set(['.env', '.git']))
   const remote = execSync('git remote get-url origin', { cwd: ROOT, encoding: 'utf8' }).trim()
+  const date = new Date().toISOString().slice(0, 10)
 
   run('git init', tmp)
-  run('git checkout -b live', tmp)
+  run(`git checkout -b ${PROD_BRANCH}`, tmp)
   run('git add .', tmp)
-  run(`git commit -m "Deploy live: ${new Date().toISOString().slice(0, 10)}"`, tmp)
+  run(`git commit -m "Canlı site: ${date}"`, tmp)
   run(`git remote add origin "${remote}"`, tmp)
-  run('git push -u origin live --force', tmp)
+  run(`git push -u origin ${PROD_BRANCH} --force`, tmp)
 
   fs.rmSync(tmp, { recursive: true, force: true })
-  console.log('\n✓ live branch → GitHub (Hostinger otomatik çeker)\n')
+  console.log(`\n✓ GitHub ${PROD_BRANCH} → sadece canlı dosyalar (Hostinger çeker)\n`)
+}
+
+function ensureDevBranch() {
+  const branch = execSync('git branch --show-current', { cwd: ROOT, encoding: 'utf8' }).trim()
+  if (branch !== DEV_BRANCH) {
+    tryRun(`git branch -M ${DEV_BRANCH}`)
+    console.log(`Yerel branch → ${DEV_BRANCH}`)
+  }
+  run(`git push -u origin ${DEV_BRANCH}`)
+  console.log(`✓ GitHub ${DEV_BRANCH} → kaynak kod\n`)
 }
 
 console.log('Build…')
 run('npm run build')
 
-const live = path.join(ROOT, '1-CANLI-SITE')
-if (!fs.existsSync(live)) throw new Error('1-CANLI-SITE yok')
-if (!fs.existsSync(path.join(live, 'admin'))) throw new Error('admin/ eksik — build syncAdminIntoLive kontrol et')
+const site = path.join(ROOT, '1-CANLI-SITE')
+if (!fs.existsSync(site)) throw new Error('1-CANLI-SITE yok')
+if (!fs.existsSync(path.join(site, 'admin'))) throw new Error('admin/ eksik')
+if (!fs.existsSync(path.join(site, 'api'))) throw new Error('api/ eksik')
+if (!fs.existsSync(path.join(site, 'index.html'))) throw new Error('index.html eksik')
 
-pushLiveBranch()
+pushProductionMain()
+ensureDevBranch()
 
-console.log('Hostinger alt alan adları (public_html alt klasörleri):')
-console.log('  kayserisineklik.com.tr           → public_html/')
-console.log('  api.kayserisineklik.com.tr       → public_html/api/')
-console.log('  admin.kayserisineklik.com.tr     → public_html/admin/')
+tryRun('git push origin --delete live')
+tryRun('git push origin --delete admin')
+
+console.log('Hostinger Git ayarı: branch = main')
+console.log('  kayserisineklik.com.tr       → public_html/')
+console.log('  api.kayserisineklik.com.tr   → public_html/api/')
+console.log('  admin.kayserisineklik.com.tr → public_html/admin/')

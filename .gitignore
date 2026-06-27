@@ -15,7 +15,11 @@
 .DS_Store
 Thumbs.db
 
-# Eski Next.js kalıntıları (bu repo saf HTML)
+# Deploy geçici klasörleri
+.deploy-main/
+.deploy-live/
+.deploy-admin/
+
 node_modules/
 .next/
 out/

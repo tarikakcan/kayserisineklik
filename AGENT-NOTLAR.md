@@ -2,9 +2,10 @@
 
 ## Mimari
 
-- **1-CANLI-SITE/** → Hostinger `public_html` (saf HTML + `api/` + `admin/` alt klasörleri)
-- **2-ADMIN/** → build kaynağı; canlıda `public_html/admin/` olarak kopyalanır
-- **Kaynak build:** `kaynak/pure-html/build.mjs` (proje kökünden `npm run build`)
+- **GitHub `main`** → Hostinger `public_html` (sadece canlı dosyalar)
+- **GitHub `dev`** → kaynak kod (deploy edilmez)
+- **1-CANLI-SITE/** → build çıktısı; `main`'e gider
+- **Build:** `npm run deploy:github`
 
 ## Teknoloji
 
@@ -43,11 +44,11 @@ Admin panelden fiyat güncellenince site anında yansır (API fetch).
 
 ## Bilinen tuzaklar
 
-1. Hostinger Git → branch **`live`** (`main` değil)
-2. Alt alan adları: `api` → `public_html/api/`, `admin` → `public_html/admin/`
+1. Hostinger Git → branch **`main`** (içinde sadece canlı dosyalar olmalı)
+2. **`dev`** branch Hostinger'a bağlanmamalı
 3. Güncelleme: `npm run deploy:github`
-4. `public_html/api/.env` ve `public_html/admin/.env` sunucuda elle
-5. Eski Next.js `_next/` klasörü yok
+4. `.env` dosyaları sunucuda elle
+5. public_html'de `kaynak/`, `1-CANLI-SITE/` klasör adı olmamalı
 
 ## Cursor bağlantısı
 
