@@ -121,7 +121,8 @@
       priceEl.textContent = `₺${formatTry(price)}`
       detailEl.textContent = `${area.toFixed(2)} m² × ₺${formatTry(perM2)}/m² (KDV hariç)`
       const msg = `Merhaba, ${name} için teklif almak istiyorum.\n• Ölçü: ${wEl.value} x ${hEl.value} cm\n• ${optEl.value}\n• Yaklaşık: ₺${formatTry(price)}`
-      waEl.href = `https://wa.me/905388202036?text=${encodeURIComponent(msg)}`
+      const waNum = CFG.whatsappNumber || '905388202036'
+      waEl.href = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`
       box.dataset.price = String(price)
     }
     wEl.addEventListener('input', refresh)
