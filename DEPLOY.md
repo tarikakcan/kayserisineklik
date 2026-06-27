@@ -1,64 +1,51 @@
 # Kayseri Sineklik — Deploy (Saf HTML)
 
-## GitHub branch'leri (otomatik)
+## Hostinger Git (otomatik canlı)
 
-| Branch | Ne var | Hostinger |
-|--------|--------|-----------|
-| `main` | Kaynak kod + build çıktıları | — |
-| **`live`** | Sadece canlı site (`index.html` kökte) | Ana domain → `public_html` |
-| **`admin`** | Sadece admin panel | admin subdomain |
-
-Deploy komutu (geliştirici veya agent):
+Hostinger GitHub'a bağlı. Branch **`live`** → `public_html`.
 
 ```powershell
 cd C:\Users\mosta\Desktop\kayserisineklik
 npm run deploy:github
 ```
 
-Bu komut: `npm run build` → `live` branch push → `admin` branch push.
+Build + `live` branch push → Hostinger otomatik çeker.
 
-## Hostinger Git bağlantısı (bir kez)
+## Alt alan adları
 
-### Ana site (kayserisineklik.com.tr)
+Hostinger'da alt alan adları `public_html` alt klasörlerine bağlı:
 
-1. Hostinger → Websites → **Git**
-2. Repo: `https://github.com/tarikakcan/kayserisineklik.git`
-3. Branch: **`live`** (main değil!)
-4. Deploy path: `public_html`
-5. `public_html` içini önce boşalt (eski yanlış yükleme varsa sil)
+| Alt alan adı | Dizin | İçerik |
+|--------------|-------|--------|
+| (ana domain) | `public_html/` | HTML site |
+| api.kayserisineklik.com.tr | `public_html/api/` | contact.php, quote.php |
+| admin.kayserisineklik.com.tr | `public_html/admin/` | Fiyat paneli + pricing.php |
 
-Kökte olması gerekenler (`live` branch):
+`live` branch'te hepsi bir arada:
 
 ```
-index.html
-logo.svg
-.htaccess
-assets/
-api/
-urunler/
-blog/
-sitemap.xml
-robots.txt
+public_html/
+├── index.html
+├── api/
+├── admin/
+├── assets/
+├── urunler/
+└── blog/
 ```
 
-4. Sunucuda `api/.env` oluştur (`.env.example`'dan, `SMTP_PASS` doldur)
+## Hostinger Git ayarı
 
-### Admin (admin.kayserisineklik.com.tr)
+- Repo: `https://github.com/tarikakcan/kayserisineklik.git`
+- Branch: **`live`**
+- Path: `public_html`
 
-1. Admin subdomain → Git
-2. Aynı repo, branch: **`admin`**
-3. Sunucuda `.env` oluştur (`ADMIN_PASS_HASH`)
+## Sunucuda elle oluştur
 
-## Manuel alternatif
+- `public_html/api/.env` — SMTP (`.env.example`'dan)
+- `public_html/admin/.env` — `ADMIN_PASS_HASH`
 
-```powershell
-npm run zip   # canli-site.zip = 1-CANLI-SITE içeriği
-```
+## Geliştirme branch'i
 
-Zip içeriğini `public_html` köküne yükle (klasör adı olmadan).
-
-## Site güncelleme
-
-Kaynak değiştir → `npm run deploy:github` → Hostinger Git otomatik çeker (veya panelden Deploy).
+`main` = kaynak kod. Hostinger'a deploy edilmez.
 
 Git akışı: `GIT.md`

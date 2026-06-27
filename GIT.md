@@ -55,7 +55,7 @@ kayserisineklik/
 npm run deploy:github
 ```
 
-Hostinger Git → branch **`live`** (ana site), **`admin`** (admin panel).
+Hostinger Git → branch **`live`** (ana site + `api/` + `admin/` alt klasörleri).
 
 Detay: `DEPLOY.md`
 

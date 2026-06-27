@@ -1,7 +1,8 @@
 /**
- * Hostinger Git deploy için orphan branch'ler:
- *   live  → 1-CANLI-SITE içeriği (public_html kökü)
- *   admin → 2-ADMIN içeriği (admin subdomain)
+ * Hostinger Git deploy — live branch = public_html tamamı
+ *   /           → ana site
+ *   /api/       → api.kayserisineklik.com.tr
+ *   /admin/     → admin.kayserisineklik.com.tr
  */
 import fs from 'fs'
 import path from 'path'
@@ -25,35 +26,35 @@ function copyDir(src, dest, skip = new Set()) {
   }
 }
 
-function pushDeployBranch(branch, srcDir) {
-  const tmp = path.join(ROOT, `.deploy-${branch}`)
+function pushLiveBranch() {
+  const liveSrc = path.join(ROOT, '1-CANLI-SITE')
+  const tmp = path.join(ROOT, '.deploy-live')
   if (fs.existsSync(tmp)) fs.rmSync(tmp, { recursive: true, force: true })
 
-  copyDir(srcDir, tmp, new Set(['.env', '.git']))
+  copyDir(liveSrc, tmp, new Set(['.env', '.git']))
   const remote = execSync('git remote get-url origin', { cwd: ROOT, encoding: 'utf8' }).trim()
 
   run('git init', tmp)
-  run('git checkout -b ' + branch, tmp)
+  run('git checkout -b live', tmp)
   run('git add .', tmp)
-  run(`git commit -m "Deploy ${branch}: ${new Date().toISOString().slice(0, 10)}"`, tmp)
+  run(`git commit -m "Deploy live: ${new Date().toISOString().slice(0, 10)}"`, tmp)
   run(`git remote add origin "${remote}"`, tmp)
-  run(`git push -u origin ${branch} --force`, tmp)
+  run('git push -u origin live --force', tmp)
 
   fs.rmSync(tmp, { recursive: true, force: true })
-  console.log(`\n✓ ${branch} branch pushed (kök = ${path.basename(srcDir)} içeriği)\n`)
+  console.log('\n✓ live branch → GitHub (Hostinger otomatik çeker)\n')
 }
 
 console.log('Build…')
 run('npm run build')
 
 const live = path.join(ROOT, '1-CANLI-SITE')
-const admin = path.join(ROOT, '2-ADMIN')
-if (!fs.existsSync(live)) throw new Error('1-CANLI-SITE yok — önce npm run build')
-if (!fs.existsSync(admin)) throw new Error('2-ADMIN yok — önce npm run build')
+if (!fs.existsSync(live)) throw new Error('1-CANLI-SITE yok')
+if (!fs.existsSync(path.join(live, 'admin'))) throw new Error('admin/ eksik — build syncAdminIntoLive kontrol et')
 
-pushDeployBranch('live', live)
-pushDeployBranch('admin', admin)
+pushLiveBranch()
 
-console.log('Hostinger Git:')
-console.log('  Ana site  → branch: live')
-console.log('  Admin     → branch: admin')
+console.log('Hostinger alt alan adları (public_html alt klasörleri):')
+console.log('  kayserisineklik.com.tr           → public_html/')
+console.log('  api.kayserisineklik.com.tr       → public_html/api/')
+console.log('  admin.kayserisineklik.com.tr     → public_html/admin/')

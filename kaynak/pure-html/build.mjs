@@ -180,6 +180,18 @@ function copyAdmin() {
   copyDir(path.join(ROOT, 'admin'), ADMIN_OUT)
 }
 
+/** Hostinger: admin.kayserisineklik.com.tr → public_html/admin */
+function syncAdminIntoLive() {
+  const dest = path.join(OUT, 'admin')
+  if (fs.existsSync(dest)) fs.rmSync(dest, { recursive: true, force: true })
+  copyDir(ADMIN_OUT, dest)
+  const dataHt = path.join(ROOT, 'admin', 'data', '.htaccess')
+  if (fs.existsSync(dataHt)) {
+    fs.mkdirSync(path.join(dest, 'data'), { recursive: true })
+    fs.copyFileSync(dataHt, path.join(dest, 'data', '.htaccess'))
+  }
+}
+
 function pageHome() {
   const cards = products.map(p => `<a href="urunler/${p.slug}.html" class="group rounded-3xl overflow-hidden bg-card border border-border hover:border-primary/40 block">
 <div class="aspect-[4/5] relative overflow-hidden"><img src="${esc(p.image)}" alt="${esc(p.name)}" class="h-full w-full object-cover"/>
@@ -327,4 +339,5 @@ pageStatic('sineklik-montaji', 'Sineklik Montajı', 'Sineklik Montajı', `<p>Kay
 pageBlogList()
 blogPosts.forEach(pageBlogPost)
 page404()
-console.log('Tamam! Hostinger: 1-CANLI-SITE içeriğini public_html\'e at.')
+syncAdminIntoLive()
+console.log('Tamam! Hostinger Git: live branch → public_html (api/ + admin/ dahil)')

@@ -1,49 +1,54 @@
 ---
-description: Hostinger deploy — GitHub live/admin branch, public_html'e sadece live kökü
+description: Hostinger Git deploy — live branch, public_html alt klasörleri api/ ve admin/
 alwaysApply: true
 ---
 
 # Hostinger Deploy Kuralı
 
-## GitHub branch yapısı
+## Hostinger Git (tek bağlantı)
 
-| Branch | İçerik | Hostinger hedefi |
-|--------|--------|------------------|
-| `main` | Geliştirme (kaynak, build, dokümantasyon) | Deploy edilmez |
-| `live` | `1-CANLI-SITE/` içeriği, **repo kökünde** | `public_html` (ana domain) |
-| `admin` | `2-ADMIN/` içeriği, **repo kökünde** | admin subdomain document root |
+Branch: **`live`** → `public_html`
 
-Güncelleme: `npm run deploy:github` (build + live + admin push)
+Hostinger GitHub'a bağlı; `npm run deploy:github` push edince canlıya yansır.
 
-## ASLA public_html'e yükleme
+## Alt alan adları (public_html alt klasörleri)
 
-Proje `main` kökündeki şunlar canlı sunucuya gitmez:
+| URL | Hostinger dizin | live branch yolu |
+|-----|-----------------|------------------|
+| kayserisineklik.com.tr | public_html/ | index.html, assets/, … |
+| api.kayserisineklik.com.tr | public_html/api/ | api/contact.php, api/quote.php |
+| admin.kayserisineklik.com.tr | public_html/admin/ | admin/admin/index.php, admin/api/pricing.php |
 
-- `.git/`, `kaynak/`, `2-ADMIN/` (ana site için), `1-CANLI-SITE/` klasör adı
-- `package.json`, `*.md`, `.cursor/`
-
-## Ana site → public_html
-
-`live` branch kökü = doğru yapı:
+`live` branch yapısı:
 
 ```
 index.html
-logo.svg
-.htaccess
+api/          ← formlar (contact, quote)
+admin/        ← fiyat paneli + pricing API
 assets/
-api/
 urunler/
 blog/
 ```
 
-Yanlış: `public_html/1-CANLI-SITE/index.html`
-Yanlış: `main` branch'in tamamını public_html'e çekmek
+## Branch'ler
 
-## Hostinger Git bağlantısı
+| Branch | Amaç |
+|--------|------|
+| `main` | Geliştirme — deploy edilmez |
+| `live` | Hostinger Git — tek canlı kaynak |
 
-1. Ana site: GitHub repo → branch **`live`** → public_html
-2. Admin: aynı repo → branch **`admin`** → admin subdomain root
-3. Sunucuda elle: `api/.env` (SMTP), admin `.env` (ADMIN_PASS_HASH)
+Güncelleme: `npm run deploy:github`
+
+## ASLA yapma
+
+- `main` branch'i Hostinger'a bağlama
+- Proje kökünü (`kaynak/`, md dosyaları) public_html'e yükleme
+- Ayrı `admin` branch (Hostinger alt klasör kullanıyor)
+
+## Sunucuda elle (.env Git'e konmaz)
+
+- `public_html/api/.env` — SMTP
+- `public_html/admin/.env` — ADMIN_PASS_HASH
 
 ## Referans
 

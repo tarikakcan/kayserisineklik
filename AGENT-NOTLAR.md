@@ -2,8 +2,8 @@
 
 ## Mimari
 
-- **1-CANLI-SITE/** → Hostinger `public_html` (saf HTML, `_next` yok)
-- **2-ADMIN/** → admin subdomain (PHP fiyat paneli)
+- **1-CANLI-SITE/** → Hostinger `public_html` (saf HTML + `api/` + `admin/` alt klasörleri)
+- **2-ADMIN/** → build kaynağı; canlıda `public_html/admin/` olarak kopyalanır
 - **Kaynak build:** `kaynak/pure-html/build.mjs` (proje kökünden `npm run build`)
 
 ## Teknoloji
@@ -43,12 +43,11 @@ Admin panelden fiyat güncellenince site anında yansır (API fetch).
 
 ## Bilinen tuzaklar
 
-1. **YANLIŞ:** `main` branch'i veya proje kökünü `public_html`'e yüklemek / Git ile çekmek
-2. **DOĞRU:** Hostinger Git → branch **`live`** (kökte `index.html`)
-3. **DOĞRU:** Admin subdomain → branch **`admin`**
-4. Güncelleme: `npm run deploy:github`
-5. `api/.env` sunucuda olmalı (Git'e koyma)
-6. Eski Next.js `_next/` klasörü bu sürümde **yok**
+1. Hostinger Git → branch **`live`** (`main` değil)
+2. Alt alan adları: `api` → `public_html/api/`, `admin` → `public_html/admin/`
+3. Güncelleme: `npm run deploy:github`
+4. `public_html/api/.env` ve `public_html/admin/.env` sunucuda elle
+5. Eski Next.js `_next/` klasörü yok
 
 ## Cursor bağlantısı
 
