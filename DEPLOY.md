@@ -1,44 +1,64 @@
 # Kayseri Sineklik — Deploy (Saf HTML)
 
-## Ana site (kayserisineklik.com.tr)
+## GitHub branch'leri (otomatik)
 
-**Hazır zip:** `canli-site.zip` (1-CANLI-SITE içeriği)
+| Branch | Ne var | Hostinger |
+|--------|--------|-----------|
+| `main` | Kaynak kod + build çıktıları | — |
+| **`live`** | Sadece canlı site (`index.html` kökte) | Ana domain → `public_html` |
+| **`admin`** | Sadece admin panel | admin subdomain |
 
-1. Hostinger → Dosya Yöneticisi → `public_html`
-2. **İçindeki her şeyi sil**
-3. `1-CANLI-SITE/` **içindekilerin tamamını** yükle (klasörün kendisini değil)
+Deploy komutu (geliştirici veya agent):
 
-Kök dizinde olması gerekenler:
+```powershell
+cd C:\Users\mosta\Desktop\kayserisineklik
+npm run deploy:github
+```
+
+Bu komut: `npm run build` → `live` branch push → `admin` branch push.
+
+## Hostinger Git bağlantısı (bir kez)
+
+### Ana site (kayserisineklik.com.tr)
+
+1. Hostinger → Websites → **Git**
+2. Repo: `https://github.com/tarikakcan/kayserisineklik.git`
+3. Branch: **`live`** (main değil!)
+4. Deploy path: `public_html`
+5. `public_html` içini önce boşalt (eski yanlış yükleme varsa sil)
+
+Kökte olması gerekenler (`live` branch):
 
 ```
 index.html
 logo.svg
 .htaccess
-assets/css/site.css
-assets/js/site.js
-api/contact.php
-api/quote.php
-urunler/...
-blog/...
+assets/
+api/
+urunler/
+blog/
+sitemap.xml
+robots.txt
 ```
 
-**`_next` klasörü YOK** — bu saf HTML sürüm.
+4. Sunucuda `api/.env` oluştur (`.env.example`'dan, `SMTP_PASS` doldur)
 
-4. `api/.env` oluştur (`.env.example`'dan kopyala, SMTP_PASS doldur)
+### Admin (admin.kayserisineklik.com.tr)
 
-## Admin (admin.kayserisineklik.com.tr)
+1. Admin subdomain → Git
+2. Aynı repo, branch: **`admin`**
+3. Sunucuda `.env` oluştur (`ADMIN_PASS_HASH`)
 
-1. `2-ADMIN/` içeriğini admin subdomain document root'a yükle
-2. `.env` oluştur (`ADMIN_PASS_HASH` ile)
-3. Giriş: https://admin.kayserisineklik.com.tr/
-
-## Site güncelleme (geliştirici)
+## Manuel alternatif
 
 ```powershell
-cd C:\Users\mosta\Desktop\kayserisineklik
-npm run build
+npm run zip   # canli-site.zip = 1-CANLI-SITE içeriği
 ```
 
-Sonra `1-CANLI-SITE/` içeriğini tekrar `public_html`'e yükle.
+Zip içeriğini `public_html` köküne yükle (klasör adı olmadan).
 
-Git akışı için: `GIT.md`
+## Site güncelleme
+
+Kaynak değiştir → `npm run deploy:github` → Hostinger Git otomatik çeker (veya panelden Deploy).
+
+Git akışı: `GIT.md`

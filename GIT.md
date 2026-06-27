@@ -49,12 +49,17 @@ kayserisineklik/
 
 ## Hostinger'a yayınlama
 
-GitHub push sonrası:
+**Otomatik (önerilen):**
 
-1. `1-CANLI-SITE/` içeriğini `public_html`'e yükle
-2. veya `npm run zip` → `canli-site.zip` aç → yükle
+```powershell
+npm run deploy:github
+```
+
+Hostinger Git → branch **`live`** (ana site), **`admin`** (admin panel).
 
 Detay: `DEPLOY.md`
+
+**Manuel:** `1-CANLI-SITE/` içeriğini `public_html`'e yükle veya `npm run zip`.
 
 ## İlk push (eski Next.js repo yerine)
 

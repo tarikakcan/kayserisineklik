@@ -1,0 +1,50 @@
+---
+description: Hostinger deploy — GitHub live/admin branch, public_html'e sadece live kökü
+alwaysApply: true
+---
+
+# Hostinger Deploy Kuralı
+
+## GitHub branch yapısı
+
+| Branch | İçerik | Hostinger hedefi |
+|--------|--------|------------------|
+| `main` | Geliştirme (kaynak, build, dokümantasyon) | Deploy edilmez |
+| `live` | `1-CANLI-SITE/` içeriği, **repo kökünde** | `public_html` (ana domain) |
+| `admin` | `2-ADMIN/` içeriği, **repo kökünde** | admin subdomain document root |
+
+Güncelleme: `npm run deploy:github` (build + live + admin push)
+
+## ASLA public_html'e yükleme
+
+Proje `main` kökündeki şunlar canlı sunucuya gitmez:
+
+- `.git/`, `kaynak/`, `2-ADMIN/` (ana site için), `1-CANLI-SITE/` klasör adı
+- `package.json`, `*.md`, `.cursor/`
+
+## Ana site → public_html
+
+`live` branch kökü = doğru yapı:
+
+```
+index.html
+logo.svg
+.htaccess
+assets/
+api/
+urunler/
+blog/
+```
+
+Yanlış: `public_html/1-CANLI-SITE/index.html`
+Yanlış: `main` branch'in tamamını public_html'e çekmek
+
+## Hostinger Git bağlantısı
+
+1. Ana site: GitHub repo → branch **`live`** → public_html
+2. Admin: aynı repo → branch **`admin`** → admin subdomain root
+3. Sunucuda elle: `api/.env` (SMTP), admin `.env` (ADMIN_PASS_HASH)
+
+## Referans
+
+`DEPLOY.md`, `GIT.md`, `AGENT-NOTLAR.md`

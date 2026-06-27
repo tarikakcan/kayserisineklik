@@ -43,9 +43,12 @@ Admin panelden fiyat güncellenince site anında yansır (API fetch).
 
 ## Bilinen tuzaklar
 
-1. Zip açarken `1-CANLI-SITE` klasörünü değil **içeriğini** yükle
-2. `api/.env` sunucuda olmalı (Git'e koyma)
-3. Eski Next.js `_next/` klasörü bu sürümde **yok**
+1. **YANLIŞ:** `main` branch'i veya proje kökünü `public_html`'e yüklemek / Git ile çekmek
+2. **DOĞRU:** Hostinger Git → branch **`live`** (kökte `index.html`)
+3. **DOĞRU:** Admin subdomain → branch **`admin`**
+4. Güncelleme: `npm run deploy:github`
+5. `api/.env` sunucuda olmalı (Git'e koyma)
+6. Eski Next.js `_next/` klasörü bu sürümde **yok**
 
 ## Cursor bağlantısı
 
