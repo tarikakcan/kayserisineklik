@@ -357,7 +357,7 @@ function pageHome() {
     canonical: '/',
     jsonLdData: schemaLocalBusiness(),
     body: `<section class="warm-hero"><div class="container py-14 md:py-24 grid lg:grid-cols-2 gap-10 items-center">
-<div><h1 class="text-4xl md:text-6xl font-bold leading-tight">Sinek girmesin, <span class="text-primary ink-underline">içeri ferahlık</span> girsin.</h1>
+<div><h1 class="text-4xl md:text-6xl font-bold leading-tight">İçeri sinek girmesin, <span class="text-primary ink-underline">ferahlık gelsin</span>.</h1>
 <p class="mt-6 text-lg text-foreground/75">${esc(site.description)}</p>
 <div class="mt-8 flex flex-wrap gap-3">
 <a href="${wa()}" class="inline-flex items-center px-7 py-3 rounded-full bg-[#25D366] text-white font-semibold">WhatsApp'tan Teklif Al</a>

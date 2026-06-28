@@ -17,7 +17,7 @@ export const site = {
   email: 'info@edekakapi.com',
   logo: '/logo.svg',
   slogans: [
-    'Sinek Girmesin, İçeri Ferahlık Girsin.',
+    'İçeri sinek girmesin, ferahlık gelsin.',
     'Her Ölçüye Uyan Sineklik, Her Bütçeye Uygun Fiyat.'
   ],
   shipping: {
