@@ -95,7 +95,7 @@ function schemaProduct(p) {
     '@type': 'Product',
     name: p.name,
     description: p.tagline,
-    image: p.image,
+    image: p.image.startsWith('http') ? p.image : `${site.url}${p.image}`,
     brand: { '@type': 'Brand', name: 'Edeka Kapı' },
     offers: {
       '@type': 'Offer',
@@ -271,6 +271,9 @@ function copyAssets() {
   copyDir(path.join(ROOT, 'public/colors'), path.join(OUT, 'assets/colors'))
   if (fs.existsSync(path.join(ROOT, 'public/blog'))) {
     copyDir(path.join(ROOT, 'public/blog'), path.join(OUT, 'assets/blog'))
+  }
+  if (fs.existsSync(path.join(ROOT, 'public/products'))) {
+    copyDir(path.join(ROOT, 'public/products'), path.join(OUT, 'assets/products'))
   }
   copyDir(path.join(ROOT, 'public/api'), path.join(OUT, 'api'))
   fs.copyFileSync(path.join(ROOT, 'public/.htaccess'), path.join(OUT, '.htaccess'))

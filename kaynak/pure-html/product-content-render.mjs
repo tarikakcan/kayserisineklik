@@ -74,8 +74,14 @@ export function renderProductContentLeft(content, { esc, frameColors, assetPrefi
     .map(item => `<li class="flex gap-2 text-sm leading-relaxed"><span class="text-primary shrink-0">•</span><span>${esc(item)}</span></li>`)
     .join('')}</ul>`
 
+  const inlineImg = content.inlineImage
+    ? `<figure class="my-6"><img src="${assetPrefix}${content.inlineImage.src}" alt="${esc(content.inlineImage.alt)}" class="rounded-2xl w-full border object-cover" loading="lazy"/>${content.inlineImage.caption ? `<figcaption class="text-xs text-muted-foreground mt-2 text-center leading-relaxed">${esc(content.inlineImage.caption)}</figcaption>` : ''}</figure>`
+    : ''
+
+  const howSection = sectionCard(`${sectionHead('Nasıl Çalışır?', 'howItWorks')}<div class="space-y-3">${howHtml}</div>${inlineImg}`)
+
   return `<div class="product-rich-content mt-8 space-y-6">
-${sectionCard(`${sectionHead('Nasıl Çalışır?', 'howItWorks')}<div class="space-y-3">${howHtml}</div>`)}
+${howSection}
 ${sectionCard(`${sectionHead('Nerelerde Kullanılır?', 'useCases')}<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${useCards}</div>`)}
 ${sectionCard(`${sectionHead('Malzeme ve Yapı', 'materials')}${materialsHtml}`)}
 ${sectionCard(`${sectionHead('Renk ve Seçenekler', 'colors')}${colorsHtml}`)}
