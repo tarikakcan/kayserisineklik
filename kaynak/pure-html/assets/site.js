@@ -76,7 +76,7 @@
       if (v != null && v !== '') body.append(k, String(v))
     }
     body.append('website', '')
-    const res = await fetch(url, { method: 'POST', body })
+    const res = await fetch(url, { method: 'POST', body, credentials: 'same-origin' })
     const data = await res.json().catch(() => ({}))
     if (!res.ok || !data.ok) throw new Error(data.error || 'Gönderim başarısız')
     return data

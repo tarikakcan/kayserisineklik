@@ -81,9 +81,14 @@ function form_honeypot_ok(): bool
 
 function form_client_ip(): string
 {
-    return $_SERVER['HTTP_X_FORWARDED_FOR']
-        ?? $_SERVER['REMOTE_ADDR']
-        ?? '0.0.0.0';
+    $xff = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';
+    if ($xff !== '') {
+        $parts = array_map('trim', explode(',', $xff));
+        if ($parts[0] !== '') {
+            return $parts[0];
+        }
+    }
+    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 }
 
 function form_rate_limit_ok(string $bucket, int $max = 5, int $windowSec = 600): bool

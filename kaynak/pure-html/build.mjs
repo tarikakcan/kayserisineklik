@@ -276,6 +276,11 @@ function copyAssets() {
     copyDir(path.join(ROOT, 'public/products'), path.join(OUT, 'assets/products'))
   }
   copyDir(path.join(ROOT, 'public/api'), path.join(OUT, 'api'))
+  const apiDataHt = path.join(ROOT, 'public/api/data/.htaccess')
+  if (fs.existsSync(apiDataHt)) {
+    fs.mkdirSync(path.join(OUT, 'api/data'), { recursive: true })
+    fs.copyFileSync(apiDataHt, path.join(OUT, 'api/data/.htaccess'))
+  }
   fs.copyFileSync(path.join(ROOT, 'public/.htaccess'), path.join(OUT, '.htaccess'))
   writeSeoFiles()
 }

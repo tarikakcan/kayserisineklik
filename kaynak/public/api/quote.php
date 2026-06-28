@@ -21,6 +21,8 @@ $note = form_str('note', 3000);
 $product = form_str('product', 160);
 $width = form_str('width', 20);
 $height = form_str('height', 20);
+$quantity = form_str('quantity', 10);
+$color = form_str('color', 40);
 $option = form_str('option', 80);
 $price = form_str('price', 20);
 
@@ -30,22 +32,23 @@ if ($name === '' || $phone === '') {
 
 $mailSubject = '[Kayseri Sineklik] Yeni Teklif Talebi' . ($product ? ' — ' . $product : '');
 $olcu = ($width !== '' && $height !== '') ? "{$width} x {$height} cm" : '';
-$priceLine = $price !== '' ? '₺' . number_format((float) str_replace(['.', ','], ['', '.'], $price), 0, ',', '.') : '';
+$priceNum = is_numeric($price) ? (float) $price : 0;
+$priceLine = $priceNum > 0 ? '₺' . number_format($priceNum, 0, ',', '.') . ' (KDV dahil yaklaşık)' : '';
+$secenek = trim($color !== '' ? $color : $option);
 
-$html = '<html><body style="font-family:system-ui,sans-serif;color:#2d2419;">'
-    . '<h2 style="color:#c45a1f;">Yeni Teklif Talebi</h2>'
-    . '<table style="border-collapse:collapse;width:100%;max-width:560px;">'
-    . form_mail_row('Ad Soyad', $name)
+$html = form_mail_wrap('Yeni Teklif Talebi',
+    form_mail_row('Ad Soyad', $name)
     . form_mail_row('Telefon', $phone)
     . form_mail_row('E-posta', $email)
     . form_mail_row('Ürün', $product)
+    . form_mail_row('Adet', $quantity)
     . form_mail_row('Ölçü', $olcu)
-    . form_mail_row('Seçenek', $option)
+    . form_mail_row('Renk / Açılım', $secenek)
     . form_mail_row('Yaklaşık Fiyat', $priceLine)
     . form_mail_row('Not', $note)
     . form_mail_row('IP', form_client_ip())
     . form_mail_row('Tarih', date('d.m.Y H:i'))
-    . '</table></body></html>';
+);
 
 try {
     form_send_mail($mailSubject, $html, $email ?: null, $name);
