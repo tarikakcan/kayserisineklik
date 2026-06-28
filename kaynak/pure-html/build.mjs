@@ -7,6 +7,7 @@ import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { renderProductContentLeft, renderPriceSection } from './product-content-render.mjs'
 import { renderBlogBlocks } from './blog-content-render.mjs'
+import { renderLegalPage } from './legal-render.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
@@ -18,6 +19,8 @@ const { site } = await import(pathToFileURL(path.join(ROOT, 'lib/site-config.js'
 const { products } = await import(pathToFileURL(path.join(ROOT, 'lib/products-config.js')).href)
 const { blogPosts } = await import(pathToFileURL(path.join(ROOT, 'lib/blog-posts.js')).href)
 const { getProductContent } = await import(pathToFileURL(path.join(ROOT, 'lib/product-content.js')).href)
+const { legalNav, legalMeta } = await import(pathToFileURL(path.join(ROOT, 'lib/legal/legal-config.js')).href)
+const { gizlilikPolitikasi } = await import(pathToFileURL(path.join(ROOT, 'lib/legal/gizlilik-politikasi.js')).href)
 
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 const formatPrice = (n) => Number(n).toLocaleString('tr-TR')
@@ -213,13 +216,16 @@ function header(depth = 0) {
 function footer(depth = 0) {
   const p = depth ? '../'.repeat(depth) : ''
   return `<footer class="mt-20 border-t border-border bg-muted/30">
-<div class="container py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="container py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
 <div><img src="${p}logo.svg" alt="${esc(site.name)}" class="h-10 w-auto max-w-[160px] object-contain"/><p class="mt-4 text-sm text-muted-foreground">${esc(site.slogans[0])}</p></div>
 <div><h4 class="font-semibold mb-3">Ürünler</h4><ul class="space-y-2 text-sm">${products.map(pr => `<li><a href="${url(`urunler/${pr.slug}.html`)}" class="text-muted-foreground hover:text-primary">${esc(pr.name)}</a></li>`).join('')}</ul></div>
 <div><h4 class="font-semibold mb-3">Kurumsal</h4><ul class="space-y-2 text-sm">
 <li><a href="${url('hakkimizda.html')}" class="text-muted-foreground hover:text-primary">Hakkımızda</a></li>
 <li><a href="${url('sineklik-fiyatlari.html')}" class="text-muted-foreground hover:text-primary">Fiyatlar</a></li>
 <li><a href="${url('iletisim.html')}" class="text-muted-foreground hover:text-primary">İletişim</a></li>
+</ul></div>
+<div><h4 class="font-semibold mb-3">Yasal</h4><ul class="space-y-2 text-sm">
+${legalNav.map(l => `<li><a href="${url(`${l.slug}.html`)}" class="text-muted-foreground hover:text-primary">${esc(l.label)}</a></li>`).join('')}
 </ul></div>
 <div><h4 class="font-semibold mb-3">İletişim</h4>
 <p class="text-sm text-muted-foreground">${esc(site.address.full)}</p>
@@ -295,6 +301,7 @@ function writeSeoFiles() {
     { loc: `${site.url}/blog`, priority: '0.8' },
     { loc: `${site.url}/hakkimizda`, priority: '0.7' },
     { loc: `${site.url}/iletisim`, priority: '0.8' },
+    { loc: `${site.url}/gizlilik-politikasi`, priority: '0.4' },
     ...products.map(p => ({ loc: `${site.url}/urunler/${p.slug}`, priority: '0.9' })),
     ...blogPosts.map(b => ({ loc: `${site.url}/blog/${b.slug}`, priority: '0.7' })),
   ]
@@ -538,6 +545,20 @@ ${blocks ? '' : `<img src="${esc(cover)}" alt="${esc(b.title)}" class="mt-6 roun
   }))
 }
 
+function pageLegal(doc) {
+  const body = renderLegalPage(doc, { esc, site, url, legalNav, legalMeta })
+  write(`${doc.slug}.html`, layout({
+    title: doc.title,
+    description: doc.subtitle,
+    canonical: `/${doc.slug}`,
+    jsonLdData: schemaBreadcrumb([
+      { name: 'Anasayfa', href: '/' },
+      { name: doc.title, href: `/${doc.slug}` },
+    ]),
+    body,
+  }))
+}
+
 function page404() {
   write('404.html', layout({ title: 'Sayfa bulunamadı', description: '404', canonical: '/404', body: `<section class="container py-24 text-center"><h1 class="text-4xl font-bold">404</h1><p class="mt-4 text-muted-foreground">Aradığınız sayfa bulunamadı.</p><a href="${url('index.html')}" class="inline-block mt-6 text-primary font-semibold">Anasayfa</a></section>` }))
 }
@@ -555,6 +576,7 @@ pageStatic('hakkimizda', 'Hakkımızda', 'Hakkımızda', `<p>${esc(site.company)
 pageStatic('sineklik-montaji', 'Sineklik Montajı', 'Sineklik Montajı', `<p>Kayseri ve çevresinde profesyonel montaj. Ücretsiz keşif, 2 yıl garanti.</p><ol class="mt-6 space-y-4 list-decimal pl-5"><li>İletişim & randevu</li><li>Ücretsiz keşif & ölçü</li><li>Ölçüye özel üretim (1-3 gün)</li><li>Profesyonel montaj</li><li>2 yıl garanti</li></ol><a href="${wa('Sineklik montajı için randevu almak istiyorum.')}" class="inline-block mt-8 px-6 py-3 rounded-full bg-primary text-primary-foreground font-semibold">WhatsApp Randevu</a>`)
 pageBlogList()
 blogPosts.forEach(pageBlogPost)
+pageLegal(gizlilikPolitikasi)
 page404()
 syncAdminIntoLive()
 console.log('Tamam! npm run deploy:github → GitHub main (canlı)')
