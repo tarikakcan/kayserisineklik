@@ -71,5 +71,19 @@ export const gizlilikPolitikasi = {
         { title: 'İşlemenin Durdurulmasını Talep Etme', text: 'Kişisel verilerinizin işlenmesinin durdurulmasını isteme hakkınız vardır.' },
       ],
     },
+    {
+      num: '07',
+      title: 'İletişim',
+      paragraphs: [
+        'KVKK kapsamındaki taleplerinizi aşağıdaki iletişim kanalları üzerinden bize iletebilirsiniz:',
+      ],
+      contactMethods: true,
+    },
+    {
+      num: '08',
+      title: 'Veri Sorumlusu',
+      controller: true,
+      footnote: 'Bu gizlilik politikası, yasal düzenlemelerdeki değişiklikler doğrultusunda güncellenebilir.',
+    },
   ],
 }

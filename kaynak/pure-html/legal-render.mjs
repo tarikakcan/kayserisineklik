@@ -1,6 +1,28 @@
 /**
  * Yasal sayfa HTML üretici
  */
+function renderContactMethods({ esc, site }) {
+  return `<div class="legal-contact-grid">
+<a href="mailto:${esc(site.email)}" class="legal-contact-card"><span>E-posta</span><strong>${esc(site.email)}</strong></a>
+<div class="legal-contact-card"><span>Posta</span><strong>${esc(site.address.full)}</strong></div>
+<a href="tel:${site.phoneIntl}" class="legal-contact-card"><span>Telefon</span><strong>${esc(site.phone)}</strong></a>
+</div>`
+}
+
+function renderController({ esc, site, legalMeta, updated, footnote }) {
+  return `<div class="legal-controller-card">
+<dl>
+<div><dt>Veri Sorumlusu</dt><dd>${esc(legalMeta.dataController)}</dd></div>
+<div><dt>Şirket</dt><dd>${esc(legalMeta.companyLegal)}</dd></div>
+<div><dt>Adres</dt><dd>${esc(site.address.full)}</dd></div>
+<div><dt>E-posta</dt><dd><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></dd></div>
+<div><dt>Web</dt><dd><a href="${esc(site.url)}">${esc(site.url)}/</a></dd></div>
+</dl>
+<p class="legal-updated">Son Güncelleme: ${esc(updated)}</p>
+${footnote ? `<p class="legal-footnote">${esc(footnote)}</p>` : ''}
+</div>`
+}
+
 export function renderLegalPage(doc, { esc, site, url, legalNav, legalMeta }) {
   const navItems = legalNav.map(item => {
     const active = item.slug === doc.slug
@@ -23,6 +45,14 @@ export function renderLegalPage(doc, { esc, site, url, legalNav, legalMeta }) {
         `<div class="legal-highlight-card"><div class="legal-highlight-label">${esc(h.label)}</div><p>${esc(h.text)}</p></div>`
       ).join('')}</div>`
     }
+    if (section.listIntro) {
+      inner += `<p class="legal-p legal-list-intro">${esc(section.listIntro)}</p>`
+    }
+    if (section.listItems?.length) {
+      inner += `<ul class="legal-list">${section.listItems.map(item =>
+        `<li>${esc(item)}</li>`
+      ).join('')}</ul>`
+    }
     if (section.purposes?.length) {
       inner += `<div class="legal-purpose-grid">${section.purposes.map(p =>
         `<div class="legal-purpose-card"><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p></div>`
@@ -36,36 +66,27 @@ export function renderLegalPage(doc, { esc, site, url, legalNav, legalMeta }) {
         `<div class="legal-right-card"><span class="legal-right-num">${i + 1}</span><h3>${esc(r.title)}</h3><p>${esc(r.text)}</p></div>`
       ).join('')}</div>`
     }
+    if (section.contactMethods) {
+      inner += renderContactMethods({ esc, site })
+    }
+    if (section.controller) {
+      inner += renderController({
+        esc,
+        site,
+        legalMeta,
+        updated: doc.updated,
+        footnote: section.footnote || '',
+      })
+    }
     return `<section class="legal-section" id="bolum-${esc(section.num)}">
 <div class="legal-section-head"><span class="legal-section-num">${esc(section.num)}</span><h2>${esc(section.title)}</h2></div>
 <div class="legal-section-body">${inner}</div>
 </section>`
   }).join('')
 
-  const contactBlock = `<section class="legal-section" id="iletisim">
-<div class="legal-section-head"><span class="legal-section-num">07</span><h2>İletişim</h2></div>
-<div class="legal-section-body">
-<p class="legal-p">KVKK kapsamındaki taleplerinizi aşağıdaki iletişim kanalları üzerinden bize iletebilirsiniz:</p>
-<div class="legal-contact-grid">
-<a href="mailto:${esc(site.email)}" class="legal-contact-card"><span>E-posta</span><strong>${esc(site.email)}</strong></a>
-<a href="${esc(site.url)}" class="legal-contact-card"><span>Web Sitesi</span><strong>${esc(site.domain)}</strong></a>
-<a href="tel:${site.phoneIntl}" class="legal-contact-card"><span>Telefon</span><strong>${esc(site.phone)}</strong></a>
-</div></div></section>`
-
-  const controllerBlock = `<section class="legal-section" id="veri-sorumlusu">
-<div class="legal-section-head"><span class="legal-section-num">08</span><h2>Veri Sorumlusu</h2></div>
-<div class="legal-section-body">
-<div class="legal-controller-card">
-<dl>
-<div><dt>Veri Sorumlusu</dt><dd>${esc(legalMeta.dataController)}</dd></div>
-<div><dt>Şirket</dt><dd>${esc(legalMeta.companyLegal)}</dd></div>
-<div><dt>Adres</dt><dd>${esc(site.address.full)}</dd></div>
-<div><dt>E-posta</dt><dd><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></dd></div>
-<div><dt>Web</dt><dd><a href="${esc(site.url)}">${esc(site.url)}/</a></dd></div>
-</dl>
-<p class="legal-updated">Son Güncelleme: ${esc(doc.updated)}</p>
-<p class="legal-footnote">Bu gizlilik politikası, yasal düzenlemelerdeki değişiklikler doğrultusunda güncellenebilir.</p>
-</div></div></section>`
+  const introNotice = doc.notice
+    ? `<div class="legal-callout legal-callout--soft"><strong>Önemli:</strong> ${esc(doc.notice)}</div>`
+    : ''
 
   return `<section class="hero-gradient legal-hero">
 <div class="container py-12 md:py-14">
@@ -84,10 +105,8 @@ export function renderLegalPage(doc, { esc, site, url, legalNav, legalMeta }) {
 <article class="legal-article">
 <div class="legal-intro-card">
 <p>${esc(doc.lead)}</p>
-<div class="legal-callout legal-callout--soft"><strong>Önemli:</strong> ${esc(doc.notice)}</div>
+${introNotice}
 </div>
 ${sections}
-${contactBlock}
-${controllerBlock}
 </article></div></section>`
 }

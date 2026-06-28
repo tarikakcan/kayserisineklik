@@ -500,3 +500,18 @@ main img:not([class*="aspect"]) {
   color: #888;
   line-height: 1.5;
 }
+
+.legal-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  color: #4a4035;
+  line-height: 1.7;
+}
+
+.legal-list li + li {
+  margin-top: 0.45rem;
+}
+
+.legal-list-intro {
+  margin-bottom: 0.35rem !important;
+}
