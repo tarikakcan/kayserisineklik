@@ -190,7 +190,8 @@
     }
 
     function getColor() {
-      return colorEl?.value || colorBtns[0]?.dataset.color || 'Beyaz'
+      if (!colorEl && !colorBtns.length) return ''
+      return colorEl?.value || colorBtns[0]?.dataset.color || ''
     }
 
     function refresh() {
@@ -212,8 +213,9 @@
           `Merhaba, ${name} için teklif almak istiyorum.`,
           `• Adet: ${q}`,
           `• Ölçü: ${wEl.value} x ${hEl.value} cm`,
-          `• Renk: ${getColor()}`,
         ]
+        const color = getColor()
+        if (color) parts.push(`• Renk: ${color}`)
         if (optEl?.value) parts.push(`• Açılım: ${optEl.value}`)
         parts.push(`• Yaklaşık: ₺${formatTry(total)}`)
         const waNum = CFG.whatsappNumber || '905388202036'

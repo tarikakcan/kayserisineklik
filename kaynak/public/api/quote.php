@@ -34,7 +34,6 @@ $mailSubject = '[Kayseri Sineklik] Yeni Teklif Talebi' . ($product ? ' — ' . $
 $olcu = ($width !== '' && $height !== '') ? "{$width} x {$height} cm" : '';
 $priceNum = is_numeric($price) ? (float) $price : 0;
 $priceLine = $priceNum > 0 ? '₺' . number_format($priceNum, 0, ',', '.') . ' (KDV dahil yaklaşık)' : '';
-$secenek = trim($color !== '' ? $color : $option);
 
 $html = form_mail_wrap('Yeni Teklif Talebi',
     form_mail_row('Ad Soyad', $name)
@@ -43,7 +42,8 @@ $html = form_mail_wrap('Yeni Teklif Talebi',
     . form_mail_row('Ürün', $product)
     . form_mail_row('Adet', $quantity)
     . form_mail_row('Ölçü', $olcu)
-    . form_mail_row('Renk / Açılım', $secenek)
+    . form_mail_row('Renk', $color)
+    . form_mail_row('Açılım', $option)
     . form_mail_row('Yaklaşık Fiyat', $priceLine)
     . form_mail_row('Not', $note)
     . form_mail_row('IP', form_client_ip())

@@ -373,6 +373,7 @@ function pageProduct(p) {
   const openingBlock = p.selectionType === 'direction'
     ? `<div><label class="text-xs font-medium">Açılım</label><select id="calc-opt" class="w-full mt-1 px-3 py-2 border border-border rounded-md bg-background">${opts}</select></div>`
     : ''
+  const colorBlock = p.selectionType === 'color' ? calcColorSwatches(1) : ''
   const rich = getProductContent(p.slug)
   const richLeft = rich
     ? renderProductContentLeft(rich, { esc, frameColors: FRAME_COLORS, assetPrefix: '../' })
@@ -409,7 +410,7 @@ ${richLeft}</div>
 <div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-medium">Genişlik (cm)</label><input type="number" id="calc-w" value="100" min="20" max="400" class="w-full mt-1 px-3 py-2 border border-border rounded-md bg-background"/></div>
 <div><label class="text-xs font-medium">Yükseklik (cm)</label><input type="number" id="calc-h" value="120" min="20" max="400" class="w-full mt-1 px-3 py-2 border border-border rounded-md bg-background"/></div></div>
 ${openingBlock}
-${calcColorSwatches(1)}
+${colorBlock}
 ${calcQtyRow()}
 <div class="p-4 rounded-lg bg-primary/10 border border-primary/15"><div class="text-xs text-muted-foreground">Yaklaşık Fiyat (KDV dahil)</div><div class="text-3xl font-extrabold text-primary mt-1" id="calc-price">—</div><div class="text-xs text-muted-foreground mt-1" id="calc-detail"></div></div>
 ${calcQuoteActions(waIconSvg)}
