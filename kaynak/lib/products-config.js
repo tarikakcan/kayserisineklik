@@ -1,4 +1,6 @@
 // Tüm ürünler ve m² birim fiyatları (TL). Buradan kolayca güncellenebilir.
+export const FRAME_COLOR_OPTIONS = ['Beyaz', 'Vizon', 'Meşe', 'Altın Meşe', 'Antrasit']
+
 export const products = [
   {
     slug: 'dikey-plise-sineklik',
@@ -8,7 +10,7 @@ export const products = [
     minPrice: 850,
     image: 'https://customer-assets.emergentagent.com/job_262fdf16-1181-40c4-aecb-3d93097f2d17/artifacts/xnicr7at_dikey-plise-sineklik-bipencerecom-hesapla.jpg',
     selectionType: 'color',
-    options: ['Beyaz', 'Antrasit', 'Kahverengi', 'Siyah'],
+    options: [...FRAME_COLOR_OPTIONS],
     tagline: 'Pencereler için yukarıdan aşağıya çalışan, estetik ve dayanıklı plise sineklik.',
     description: 'Dikey Plise Sineklik, pencerelerinizde yukarıdan aşağıya doğru hareket eden plise kanat sistemiyle yer kaplamadan etkili koruma sağlar. Alüminyum kasası ve fiberglas kumaşı uzun ömürlüdür. Her ölçüye özel imal edilir.',
     features: [
@@ -26,7 +28,7 @@ export const products = [
     minPrice: 1100,
     image: 'https://customer-assets.emergentagent.com/job_262fdf16-1181-40c4-aecb-3d93097f2d17/artifacts/g3q50959_duble-plise-sineklik-bipencerecom-hesapla.jpg',
     selectionType: 'color',
-    options: ['Beyaz', 'Antrasit', 'Kahverengi', 'Siyah'],
+    options: [...FRAME_COLOR_OPTIONS],
     tagline: 'Geniş açıklıklar için ortadan açılan çift kanatlı plise sineklik sistemi.',
     description: 'Duble Plise Sineklik, geniş pencere ve balkon açıklıklarında ortadan birleşip iki yana açılan çift kanatlı plise sistemdir. Büyük açıklıkları tek parça halinde koruyabilir.',
     features: [
@@ -98,7 +100,7 @@ export const products = [
     minPrice: 450,
     image: 'https://images.pexels.com/photos/17756267/pexels-photo-17756267.jpeg',
     selectionType: 'color',
-    options: ['Beyaz', 'Antrasit', 'Kahverengi', 'Siyah'],
+    options: [...FRAME_COLOR_OPTIONS],
     tagline: 'Klasik sabit kasalı pencere sineklikleri – ekonomik ve dayanıklı.',
     description: 'Pencere Sinekliği, pencerelerinize sabit veya çıkarılabilir olarak monte edilen klasik sineklik çözümüdür. Alüminyum kasası ve fiberglas teli ile uzun yıllar kullanılır.',
     features: [
@@ -116,7 +118,7 @@ export const products = [
     minPrice: 850,
     image: 'https://images.pexels.com/photos/33447584/pexels-photo-33447584.jpeg',
     selectionType: 'color',
-    options: ['Beyaz', 'Antrasit', 'Kahverengi', 'Siyah'],
+    options: [...FRAME_COLOR_OPTIONS],
     tagline: 'Kedi pençesine dayanıklı güçlendirilmiş polyester telli sineklik.',
     description: 'Kedi Sinekliği, normal fiberglas tellere göre 7 kat daha dayanıklı polyester kaplı tel ile üretilir. Kedinizin pençelerinden ve dişlerinden etkilenmez, hem sineklerden hem evcil hayvan kaçışından koruma sağlar.',
     features: [

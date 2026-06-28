@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node kaynak/pure-html/build.mjs",
+    "import:product-content": "node scripts/import-urun-aciklama.mjs",
     "zip": "powershell -NoProfile -Command \"Compress-Archive -Path '1-CANLI-SITE\\*' -DestinationPath 'canli-site.zip' -Force\"",
     "deploy:github": "node scripts/push-deploy-branches.mjs"
   }

@@ -99,21 +99,19 @@
     })
   }
 
-  // Prices table page
+  // Prices table page — statik tabloyu API fiyatlarıyla güncelle (SEO için HTML zaten build'de)
   async function renderPricesTable() {
     const wrap = $('#prices-table')
     if (!wrap) return
     const map = await fetchPricing()
-    const rows = (CFG.products || []).map(p => {
-      const row = normalizeRow(p.slug, map)
-      return `<tr class="border-b"><td class="p-3 font-medium">${p.name}</td>
-        <td class="p-3 text-right font-semibold text-primary">₺${formatTry(row.birim_m2_fiyati)}</td>
-        <td class="p-3 text-right hidden sm:table-cell text-muted-foreground">₺${formatTry(row.minimum_fiyat)}</td>
-        <td class="p-3 text-right"><a href="urunler/${p.slug}.html" class="text-primary font-semibold">Hesapla →</a></td></tr>`
-    }).join('')
-    wrap.innerHTML = `<table class="w-full text-sm"><thead><tr class="border-b bg-muted/50">
-      <th class="p-3 text-left">Ürün</th><th class="p-3 text-right">m² (KDV hariç)</th>
-      <th class="p-3 text-right hidden sm:table-cell">Min.</th><th></th></tr></thead><tbody>${rows}</tbody></table>`
+    $$('.price-cell', wrap).forEach(el => {
+      const row = normalizeRow(el.dataset.slug, map)
+      if (row.birim_m2_fiyati) el.textContent = `₺${formatTry(row.birim_m2_fiyati)}`
+    })
+    $$('.min-cell', wrap).forEach(el => {
+      const row = normalizeRow(el.dataset.slug, map)
+      if (row.minimum_fiyat) el.textContent = `₺${formatTry(row.minimum_fiyat)}`
+    })
   }
 
   // Product calculator
@@ -125,6 +123,11 @@
     const wEl = $('#calc-w', box)
     const hEl = $('#calc-h', box)
     const optEl = $('#calc-opt', box)
+    const colorEl = $('#calc-color', box)
+    const qtyEl = $('#calc-qty', box)
+    const qtyMinus = $('#calc-qty-minus', box)
+    const qtyPlus = $('#calc-qty-plus', box)
+    const colorBtns = $$('.calc-color-swatch', box)
     const priceEl = $('#calc-price', box)
     const detailEl = $('#calc-detail', box)
     const waEl = $('#calc-wa', box)
@@ -132,19 +135,48 @@
     if (!wEl || !hEl || !priceEl) return
 
     let row = normalizeRow(slug, fallbackMap())
+    let qty = 1
+
+    function getQty() {
+      return Math.max(1, Math.min(99, qty))
+    }
+
+    function setQty(n) {
+      qty = Math.max(1, Math.min(99, n))
+      if (qtyEl) qtyEl.textContent = String(qty)
+      refresh()
+    }
+
+    function getColor() {
+      return colorEl?.value || colorBtns[0]?.dataset.color || 'Beyaz'
+    }
 
     function refresh() {
+      const q = getQty()
       const { area, price, perM2 } = calcPrice(wEl.value, hEl.value, row)
-      priceEl.textContent = price > 0 ? `₺${formatTry(price)}` : '—'
-      detailEl.textContent = perM2 > 0
-        ? `${area.toFixed(2)} m² × ₺${formatTry(perM2)}/m² (KDV hariç)`
-        : 'Ölçü girin ve Fiyat Hesapla\'ya basın'
-      if (waEl) {
-        const msg = `Merhaba, ${name} için teklif almak istiyorum.\n• Ölçü: ${wEl.value} x ${hEl.value} cm\n• ${optEl?.value || ''}\n• Yaklaşık: ₺${formatTry(price)}`
-        const waNum = CFG.whatsappNumber || '905388202036'
-        waEl.href = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`
+      const total = price * q
+      priceEl.textContent = total > 0 ? `₺${formatTry(total)}` : '—'
+      if (perM2 > 0 && q > 1) {
+        detailEl.textContent = `${q} adet × ${area.toFixed(2)} m² × ₺${formatTry(perM2)}/m² (KDV hariç)`
+      } else if (perM2 > 0) {
+        detailEl.textContent = `${area.toFixed(2)} m² × ₺${formatTry(perM2)}/m² (KDV hariç)`
+      } else {
+        detailEl.textContent = 'Ölçü girin ve Fiyat Hesapla\'ya basın'
       }
-      box.dataset.price = String(price > 0 ? price : '')
+      if (waEl) {
+        const parts = [
+          `Merhaba, ${name} için teklif almak istiyorum.`,
+          `• Adet: ${q}`,
+          `• Ölçü: ${wEl.value} x ${hEl.value} cm`,
+          `• Renk: ${getColor()}`,
+        ]
+        if (optEl?.value) parts.push(`• Açılım: ${optEl.value}`)
+        parts.push(`• Yaklaşık: ₺${formatTry(total)}`)
+        const waNum = CFG.whatsappNumber || '905388202036'
+        waEl.href = `https://wa.me/${waNum}?text=${encodeURIComponent(parts.join('\n'))}`
+      }
+      box.dataset.price = String(total > 0 ? total : '')
+      box.dataset.qty = String(q)
     }
 
     refresh()
@@ -159,6 +191,23 @@
     hEl.addEventListener('input', refresh)
     if (optEl) optEl.addEventListener('change', refresh)
     if (calcBtn) calcBtn.addEventListener('click', refresh)
+    if (qtyMinus) qtyMinus.addEventListener('click', () => setQty(getQty() - 1))
+    if (qtyPlus) qtyPlus.addEventListener('click', () => setQty(getQty() + 1))
+
+    colorBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        colorBtns.forEach(b => {
+          b.classList.remove('border-primary', 'ring-2', 'ring-primary/25')
+          b.classList.add('border-border')
+          b.setAttribute('aria-pressed', 'false')
+        })
+        btn.classList.remove('border-border')
+        btn.classList.add('border-primary', 'ring-2', 'ring-primary/25')
+        btn.setAttribute('aria-pressed', 'true')
+        if (colorEl) colorEl.value = btn.dataset.color || ''
+        refresh()
+      })
+    })
 
     const modal = $('#quote-modal')
     const openBtn = $('#quote-open')
@@ -177,8 +226,10 @@
             email: fd.get('email'),
             note: fd.get('note'),
             product: name,
+            quantity: getQty(),
             width: wEl.value,
             height: hEl.value,
+            color: getColor(),
             option: optEl?.value || '',
             price: box.dataset.price,
           })
