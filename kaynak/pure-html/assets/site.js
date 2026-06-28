@@ -82,6 +82,19 @@
     return data
   }
 
+  function privacyConsentOk(form) {
+    const cb = form?.querySelector('[name="privacy_consent"]')
+    if (!cb) return true
+    if (cb.checked) return true
+    showFormToast('Devam etmek için gizlilik onayını işaretleyin.', 'error')
+    return false
+  }
+
+  function privacyConsentValue(form) {
+    const cb = form?.querySelector('[name="privacy_consent"]')
+    return cb?.checked ? '1' : ''
+  }
+
   let formToastTimer = null
 
   function hideFormToast() {
@@ -271,6 +284,7 @@
     if (form) {
       form.addEventListener('submit', async e => {
         e.preventDefault()
+        if (!privacyConsentOk(form)) return
         const fd = new FormData(form)
         try {
           await submitForm(CFG.formQuote, {
@@ -285,6 +299,7 @@
             color: getColor(),
             option: optEl?.value || '',
             price: box.dataset.price,
+            privacy_consent: privacyConsentValue(form),
           })
           modal.classList.add('hidden')
           form.reset()
@@ -301,6 +316,7 @@
   if (contactForm) {
     contactForm.addEventListener('submit', async e => {
       e.preventDefault()
+      if (!privacyConsentOk(contactForm)) return
       const fd = new FormData(contactForm)
       const msg = $('#contact-msg')
       try {
@@ -310,6 +326,7 @@
           email: fd.get('email'),
           subject: fd.get('subject'),
           message: fd.get('message'),
+          privacy_consent: privacyConsentValue(contactForm),
         })
         if (msg) msg.classList.add('hidden')
         contactForm.reset()

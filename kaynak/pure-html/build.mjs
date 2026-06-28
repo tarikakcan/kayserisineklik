@@ -63,6 +63,15 @@ function calcQtyRow() {
 </div>`
 }
 
+function formConsentBlock() {
+  const gizlilik = url('gizlilik-politikasi.html')
+  const kvkk = url('kvkk-aydinlatma-metni.html')
+  return `<label class="form-consent">
+<input type="checkbox" name="privacy_consent" value="1" required class="form-consent-input"/>
+<span class="form-consent-text"><a href="${gizlilik}" target="_blank" rel="noopener noreferrer">Gizlilik Politikası</a> ve <a href="${kvkk}" target="_blank" rel="noopener noreferrer">KVKK Aydınlatma Metni</a>&rsquo;ni okudum, anladım.</span>
+</label>`
+}
+
 function calcQuoteActions(waIcon) {
   const icon = waIcon.replace('h-7 w-7', 'h-4 w-4 shrink-0')
   return `<div class="flex items-stretch gap-2 pt-1">
@@ -436,6 +445,7 @@ ${richPrice}</aside>
 <input name="phone" required placeholder="Telefon *" class="w-full px-3 py-2 border rounded-md"/>
 <input name="email" type="email" placeholder="E-posta" class="w-full px-3 py-2 border rounded-md"/>
 <textarea name="note" rows="3" placeholder="Not" class="w-full px-3 py-2 border rounded-md"></textarea>
+${formConsentBlock()}
 <button type="submit" class="w-full py-3 bg-primary text-primary-foreground rounded-md font-semibold">Gönder</button>
 <button type="button" id="quote-close" class="w-full py-2 text-sm text-muted-foreground">Kapat</button></form></div></div>`
   }))
@@ -479,6 +489,7 @@ function pageContact() {
 <input name="email" type="email" placeholder="E-posta" class="w-full px-3 py-2 border rounded-md"/>
 <input name="subject" placeholder="Konu" class="w-full px-3 py-2 border rounded-md"/>
 <textarea name="message" rows="4" placeholder="Mesaj" class="w-full px-3 py-2 border rounded-md"></textarea>
+${formConsentBlock()}
 <button type="submit" class="w-full py-3 bg-primary text-primary-foreground rounded-md font-semibold">Gönder</button>
 <p id="contact-msg" class="text-sm hidden"></p></form></div></section>`
   }))

@@ -587,3 +587,40 @@ main img:not([class*="aspect"]) {
 .legal-section-footnote {
   margin-top: 1rem;
 }
+
+.form-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(45, 36, 25, 0.12);
+  background: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  line-height: 1.45;
+}
+
+.form-consent-input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  accent-color: #c45a1f;
+  cursor: pointer;
+}
+
+.form-consent-text {
+  font-size: 0.8125rem;
+  color: #4a4035;
+}
+
+.form-consent-text a {
+  color: #c45a1f;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.form-consent-text a:hover {
+  color: #a34a19;
+}

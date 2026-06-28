@@ -24,6 +24,10 @@ if ($name === '' || $phone === '') {
     form_json(false, ['error' => 'Ad ve telefon zorunludur.'], 400);
 }
 
+if (!form_privacy_ok()) {
+    form_json(false, ['error' => 'Gizlilik Politikası ve KVKK Aydınlatma Metni onayı zorunludur.'], 400);
+}
+
 $mailSubject = '[Kayseri Sineklik] İletişim Formu' . ($subject ? ' — ' . $subject : '');
 $html = form_mail_wrap('Yeni İletişim Mesajı',
     form_mail_row('Ad Soyad', $name)
@@ -31,6 +35,7 @@ $html = form_mail_wrap('Yeni İletişim Mesajı',
     . form_mail_row('E-posta', $email)
     . form_mail_row('Konu', $subject)
     . form_mail_row('Mesaj', $message)
+    . form_mail_row('KVKK Onayı', 'Evet')
     . form_mail_row('IP', form_client_ip())
     . form_mail_row('Tarih', date('d.m.Y H:i'))
 );

@@ -30,6 +30,10 @@ if ($name === '' || $phone === '') {
     form_json(false, ['error' => 'Ad ve telefon zorunludur.'], 400);
 }
 
+if (!form_privacy_ok()) {
+    form_json(false, ['error' => 'Gizlilik Politikası ve KVKK Aydınlatma Metni onayı zorunludur.'], 400);
+}
+
 $mailSubject = '[Kayseri Sineklik] Yeni Teklif Talebi' . ($product ? ' — ' . $product : '');
 $olcu = ($width !== '' && $height !== '') ? "{$width} x {$height} cm" : '';
 $priceNum = is_numeric($price) ? (float) $price : 0;
@@ -46,6 +50,7 @@ $html = form_mail_wrap('Yeni Teklif Talebi',
     . form_mail_row('Açılım', $option)
     . form_mail_row('Yaklaşık Fiyat', $priceLine)
     . form_mail_row('Not', $note)
+    . form_mail_row('KVKK Onayı', 'Evet')
     . form_mail_row('IP', form_client_ip())
     . form_mail_row('Tarih', date('d.m.Y H:i'))
 );

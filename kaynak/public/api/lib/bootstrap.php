@@ -164,6 +164,11 @@ function form_honeypot_ok(): bool
     return trim((string) ($_POST['website'] ?? '')) === '';
 }
 
+function form_privacy_ok(): bool
+{
+    return in_array(trim((string) ($_POST['privacy_consent'] ?? '')), ['1', 'on', 'true'], true);
+}
+
 function form_client_ip(): string
 {
     $xff = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';
