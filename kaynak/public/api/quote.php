@@ -55,5 +55,5 @@ try {
     form_json(true);
 } catch (Throwable $e) {
     error_log('quote.php: ' . $e->getMessage());
-    form_json(false, ['error' => 'Talep gönderilemedi. Lütfen WhatsApp ile iletişime geçin.'], 500);
+    form_json(false, ['error' => form_mail_error_message($e)], 500);
 }

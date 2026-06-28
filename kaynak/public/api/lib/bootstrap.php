@@ -12,25 +12,76 @@ function form_load_env(): void
         dirname(__DIR__, 2) . '/api/.env',
     ];
     foreach ($candidates as $envFile) {
-        if (!is_file($envFile)) {
+        if (!is_readable($envFile)) {
             continue;
         }
-        foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $content = (string) file_get_contents($envFile);
+        $content = preg_replace('/^\xEF\xBB\xBF/', '', $content) ?? $content;
+        foreach (preg_split('/\R/', $content) as $line) {
             $line = trim($line);
             if ($line === '' || str_starts_with($line, '#') || !str_contains($line, '=')) {
                 continue;
             }
             [$key, $value] = explode('=', $line, 2);
             $key = trim($key);
-            $value = trim($value, " \t\"'");
-            if ($key !== '' && getenv($key) === false) {
-                putenv("$key=$value");
-                $_ENV[$key] = $value;
+            $value = form_parse_env_value($value);
+            if ($key === '') {
+                continue;
             }
+            putenv("{$key}={$value}");
+            $_ENV[$key] = $value;
+            $_SERVER[$key] = $value;
         }
         break;
     }
     $loaded = true;
+}
+
+function form_parse_env_value(string $raw): string
+{
+    $raw = trim($raw);
+    if ($raw === '') {
+        return '';
+    }
+    $q = $raw[0];
+    if (($q === '"' || $q === "'") && str_ends_with($raw, $q) && strlen($raw) >= 2) {
+        return substr($raw, 1, -1);
+    }
+    if (($pos = strpos($raw, ' #')) !== false) {
+        $raw = substr($raw, 0, $pos);
+    }
+    return trim($raw);
+}
+
+/** .env / sunucu ortamından güvenli okuma */
+function form_env(string $key, string $default = ''): string
+{
+    form_load_env();
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+        return (string) $_ENV[$key];
+    }
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '' && !str_starts_with($key, 'HTTP_')) {
+        return (string) $_SERVER[$key];
+    }
+    $v = getenv($key);
+    if ($v !== false && $v !== '') {
+        return (string) $v;
+    }
+    return $default;
+}
+
+function form_env_file(): ?string
+{
+    $candidates = [
+        __DIR__ . '/../.env',
+        dirname(__DIR__, 2) . '/api/.env',
+    ];
+    foreach ($candidates as $path) {
+        if (is_readable($path)) {
+            return $path;
+        }
+    }
+    return null;
 }
 
 function form_json(bool $ok, array $extra = [], int $status = 200): void
@@ -45,7 +96,7 @@ function form_cors(): void
 {
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-        $allowed = getenv('CORS_ORIGINS') ?: '';
+        $allowed = form_env('CORS_ORIGINS');
         if ($allowed === '*' || ($origin && ($allowed === '*' || str_contains($allowed, $origin)))) {
             header('Access-Control-Allow-Origin: ' . ($allowed === '*' ? '*' : $origin));
         }
@@ -54,7 +105,7 @@ function form_cors(): void
         return;
     }
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-    $allowed = getenv('CORS_ORIGINS') ?: '';
+    $allowed = form_env('CORS_ORIGINS');
     if ($origin && $allowed !== '' && ($allowed === '*' || str_contains($allowed, $origin))) {
         header('Access-Control-Allow-Origin: ' . ($allowed === '*' ? '*' : $origin));
         header('Access-Control-Allow-Methods: POST, OPTIONS');

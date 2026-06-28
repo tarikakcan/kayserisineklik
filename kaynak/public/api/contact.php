@@ -40,5 +40,5 @@ try {
     form_json(true);
 } catch (Throwable $e) {
     error_log('contact.php: ' . $e->getMessage());
-    form_json(false, ['error' => 'Mesaj gönderilemedi. Lütfen WhatsApp veya telefon ile ulaşın.'], 500);
+    form_json(false, ['error' => form_contact_error_message($e)], 500);
 }

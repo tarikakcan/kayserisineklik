@@ -8,14 +8,14 @@ declare(strict_types=1);
 function form_send_mail(string $subject, string $htmlBody, ?string $replyToEmail = null, ?string $replyToName = null): void
 {
     form_load_env();
-    $from = getenv('MAIL_FROM') ?: 'info@edekakapi.com';
-    $toRaw = getenv('MAIL_TO') ?: $from;
-    $fromName = getenv('MAIL_FROM_NAME') ?: 'Kayseri Sineklik Web';
-    $host = getenv('SMTP_HOST') ?: 'smtp.hostinger.com';
-    $port = (int) (getenv('SMTP_PORT') ?: 587);
-    $user = getenv('SMTP_USER') ?: $from;
-    $pass = getenv('SMTP_PASS') ?: '';
-    $secure = strtolower(trim(getenv('SMTP_SECURE') ?: ($port === 465 ? 'ssl' : 'tls')));
+    $from = form_env('MAIL_FROM', 'info@edekakapi.com');
+    $toRaw = form_env('MAIL_TO', $from);
+    $fromName = form_env('MAIL_FROM_NAME', 'Kayseri Sineklik Web');
+    $host = form_env('SMTP_HOST', 'smtp.hostinger.com');
+    $port = (int) (form_env('SMTP_PORT', '465') ?: 465);
+    $user = form_env('SMTP_USER', $from);
+    $pass = form_env('SMTP_PASS');
+    $secure = strtolower(trim(form_env('SMTP_SECURE', $port === 465 ? 'ssl' : 'tls')));
 
     if ($pass === '') {
         throw new RuntimeException('SMTP yapılandırması eksik (api/.env içinde SMTP_PASS).');
@@ -26,19 +26,31 @@ function form_send_mail(string $subject, string $htmlBody, ?string $replyToEmail
         $recipients = [$from];
     }
 
+    $ssl = [
+        'verify_peer' => true,
+        'verify_peer_name' => true,
+        'allow_self_signed' => false,
+        'SNI_enabled' => true,
+        'peer_name' => $host,
+    ];
+    $context = stream_context_create(['ssl' => $ssl]);
     $remote = ($secure === 'ssl' ? 'ssl' : 'tcp') . "://{$host}:{$port}";
-    $socket = @stream_socket_client($remote, $errno, $errstr, 25);
+    $socket = @stream_socket_client($remote, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
     if (!$socket) {
-        throw new RuntimeException("SMTP bağlantı hatası: {$errstr}");
+        throw new RuntimeException("SMTP bağlantı hatası ({$host}:{$port}): {$errstr}");
     }
 
-    stream_set_timeout($socket, 25);
+    stream_set_timeout($socket, 30);
     form_smtp_expect($socket, [220]);
     form_smtp_cmd($socket, 'EHLO kayserisineklik.com.tr', [250]);
 
     if ($secure === 'tls') {
         form_smtp_cmd($socket, 'STARTTLS', [220]);
-        if (!stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+        $crypto = STREAM_CRYPTO_METHOD_TLS_CLIENT;
+        if (defined('STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT')) {
+            $crypto |= STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+        }
+        if (!stream_socket_enable_crypto($socket, true, $crypto)) {
             throw new RuntimeException('STARTTLS başarısız.');
         }
         form_smtp_cmd($socket, 'EHLO kayserisineklik.com.tr', [250]);
@@ -57,6 +69,7 @@ function form_send_mail(string $subject, string $htmlBody, ?string $replyToEmail
     }
     form_smtp_cmd($socket, 'DATA', [354]);
 
+    $body = form_smtp_dot_stuff($htmlBody);
     $headers = [
         'MIME-Version: 1.0',
         'Content-Type: text/html; charset=UTF-8',
@@ -71,11 +84,23 @@ function form_send_mail(string $subject, string $htmlBody, ?string $replyToEmail
         $headers[] = 'Reply-To: ' . $label . '<' . $replyToEmail . '>';
     }
 
-    $message = implode("\r\n", $headers) . "\r\n\r\n" . $htmlBody . "\r\n.";
+    $message = implode("\r\n", $headers) . "\r\n\r\n" . $body . "\r\n.";
     fwrite($socket, $message . "\r\n");
     form_smtp_expect($socket, [250]);
     form_smtp_cmd($socket, 'QUIT', [221]);
     fclose($socket);
+}
+
+function form_smtp_dot_stuff(string $body): string
+{
+    $body = str_replace(["\r\n", "\r"], "\n", $body);
+    $lines = explode("\n", $body);
+    foreach ($lines as $i => $line) {
+        if (str_starts_with($line, '.')) {
+            $lines[$i] = '.' . $line;
+        }
+    }
+    return implode("\r\n", $lines);
 }
 
 function form_encode_header(string $text): string
@@ -122,4 +147,20 @@ function form_mail_wrap(string $title, string $rows): string
         . '<table style="border-collapse:collapse;width:100%;max-width:560px;">' . $rows . '</table>'
         . '<p style="margin-top:16px;font-size:12px;color:#888;">kayserisineklik.com.tr form bildirimi</p>'
         . '</body></html>';
+}
+
+function form_mail_error_message(Throwable $e): string
+{
+    if (in_array(form_env('FORM_DEBUG'), ['1', 'true', 'yes'], true)) {
+        return 'Talep gönderilemedi: ' . $e->getMessage();
+    }
+    return 'Talep gönderilemedi. Lütfen WhatsApp ile iletişime geçin.';
+}
+
+function form_contact_error_message(Throwable $e): string
+{
+    if (in_array(form_env('FORM_DEBUG'), ['1', 'true', 'yes'], true)) {
+        return 'Mesaj gönderilemedi: ' . $e->getMessage();
+    }
+    return 'Mesaj gönderilemedi. Lütfen WhatsApp veya telefon ile ulaşın.';
 }

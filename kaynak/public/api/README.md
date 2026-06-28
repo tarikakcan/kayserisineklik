@@ -20,6 +20,7 @@
 
 | Belirti | Çözüm |
 |--------|--------|
-| `mail_configured: false` | `api/.env` eksik veya `SMTP_PASS` boş |
-| 500 / gönderilemedi | Hostinger SMTP şifresini kontrol edin; port 587 deneyin, olmazsa `.env` içinde `SMTP_PORT=465` ve `SMTP_SECURE=ssl` |
+| `mail_configured: false` | `api/.env` eksik, `SMTP_PASS` boş veya dosya adı `.env.txt` |
+| 500 / gönderilemedi | Şifreyi tırnak içine alın; port 465+ssl veya 587+tls deneyin |
 | Form çalışıyor ama mail gelmiyor | Spam klasörü; `MAIL_TO` adresini doğrulayın |
+| Hata mesajını görmek | `.env` içine `FORM_DEBUG=true` ekleyin, formu tekrar deneyin |
