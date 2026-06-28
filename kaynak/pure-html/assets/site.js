@@ -82,6 +82,47 @@
     return data
   }
 
+  let formToastTimer = null
+
+  function hideFormToast() {
+    const el = $('#form-toast')
+    if (!el) return
+    el.classList.remove('form-toast--visible')
+    clearTimeout(formToastTimer)
+    formToastTimer = setTimeout(() => el.classList.add('hidden'), 280)
+  }
+
+  function showFormToast(message, type = 'success') {
+    let el = $('#form-toast')
+    if (!el) {
+      el = document.createElement('div')
+      el.id = 'form-toast'
+      el.className = 'form-toast hidden'
+      el.setAttribute('role', 'alertdialog')
+      el.setAttribute('aria-live', 'polite')
+      el.innerHTML = `<div class="form-toast-backdrop" data-toast-close></div>
+<div class="form-toast-panel">
+<button type="button" class="form-toast-close" data-toast-close aria-label="Kapat">×</button>
+<div class="form-toast-icon" aria-hidden="true"></div>
+<p class="form-toast-message"></p>
+<button type="button" class="form-toast-ok" data-toast-close>Tamam</button>
+</div>`
+      document.body.appendChild(el)
+      el.querySelectorAll('[data-toast-close]').forEach(btn => {
+        btn.addEventListener('click', hideFormToast)
+      })
+    }
+    const msgEl = $('.form-toast-message', el)
+    const iconEl = $('.form-toast-icon', el)
+    el.classList.remove('hidden', 'form-toast--success', 'form-toast--error')
+    el.classList.add(type === 'error' ? 'form-toast--error' : 'form-toast--success')
+    if (msgEl) msgEl.textContent = message
+    if (iconEl) iconEl.textContent = type === 'error' ? '!' : '✓'
+    requestAnimationFrame(() => el.classList.add('form-toast--visible'))
+    clearTimeout(formToastTimer)
+    formToastTimer = setTimeout(hideFormToast, type === 'error' ? 8000 : 5500)
+  }
+
   // Mobile menu
   const menuBtn = $('#menu-btn')
   const mobileMenu = $('#mobile-menu')
@@ -243,11 +284,11 @@
             option: optEl?.value || '',
             price: box.dataset.price,
           })
-          alert('Talebiniz alındı!')
           modal.classList.add('hidden')
           form.reset()
+          showFormToast('Talebiniz alındı! En kısa sürede sizinle iletişime geçeceğiz.')
         } catch (err) {
-          alert(err.message || 'Hata oluştu')
+          showFormToast(err.message || 'Gönderim başarısız. Lütfen tekrar deneyin.', 'error')
         }
       })
     }
@@ -268,10 +309,12 @@
           subject: fd.get('subject'),
           message: fd.get('message'),
         })
-        if (msg) { msg.textContent = 'Mesajınız alındı!'; msg.classList.remove('hidden') }
+        if (msg) msg.classList.add('hidden')
         contactForm.reset()
+        showFormToast('Mesajınız alındı! En kısa sürede size dönüş yapacağız.')
       } catch (err) {
-        if (msg) { msg.textContent = err.message; msg.classList.remove('hidden') }
+        if (msg) msg.classList.add('hidden')
+        showFormToast(err.message || 'Mesaj gönderilemedi. Lütfen tekrar deneyin.', 'error')
       }
     })
   }
