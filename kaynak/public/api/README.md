@@ -1,26 +1,36 @@
-# Form API — E-posta (SMTP)
+# Form API — Hostinger SMTP
 
-İletişim (`contact.php`) ve teklif (`quote.php`) formları bu klasör üzerinden **info@edekakapi.com** adresine mail gönderir.
+Site formları `api/contact.php` ve `api/quote.php` üzerinden mail gönderir.
 
-## Hostinger kurulumu (bir kez)
+## .env (Hostinger panelindeki isimlerle aynı)
 
-1. **hPanel → E-posta** hesabının şifresini bilin (`info@edekakapi.com`).
-2. **Dosya Yöneticisi → public_html/api/** içinde `.env` oluşturun (`.env.example` şablonunu kopyalayın).
-3. `SMTP_PASS=` alanına e-posta şifresini yazın, kaydedin.
-4. `https://kayserisineklik.com.tr/api/status.php` adresini açın — `mail_configured: true` görmelisiniz.
+`public_html/api/.env` dosyasına yapıştırın:
 
-`.env` dosyası Git ile deploy **edilmez**; sunucuda elle kalır.
+```env
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_ENCRYPTION=ssl
+SMTP_USERNAME=info@edekakapi.com
+SMTP_PASSWORD=gercek-sifre
+SMTP_FROM=info@edekakapi.com
+SMTP_FROM_NAME=Kayseri Sineklik
+```
 
-## Test
+## Kontrol
 
-- İletişim: site **İletişim** sayfasındaki form
-- Teklif: ürün sayfası **Form ile Teklif** modalı
+`https://kayserisineklik.com.tr/api/status.php` → `"mail_configured": true`
 
-## Sorun giderme
+## PHPMailer (isteğe bağlı)
 
-| Belirti | Çözüm |
-|--------|--------|
-| `mail_configured: false` | `api/.env` eksik, `SMTP_PASS` boş veya dosya adı `.env.txt` |
-| 500 / gönderilemedi | Şifreyi tırnak içine alın; port 465+ssl veya 587+tls deneyin |
-| Form çalışıyor ama mail gelmiyor | Spam klasörü; `MAIL_TO` adresini doğrulayın |
-| Hata mesajını görmek | `.env` içine `FORM_DEBUG=true` ekleyin, formu tekrar deneyin |
+Hostinger kod örneği PHPMailer kullanır. Sunucuda bir kez:
+
+```bash
+cd public_html/api
+composer install --no-dev
+```
+
+`vendor/` oluşunca PHPMailer otomatik devreye girer. Yoksa yerleşik SMTP soketi kullanılır.
+
+## Hata ayıklama
+
+`.env` içine geçici olarak `FORM_DEBUG=true` ekleyin; form hata mesajında SMTP detayı görünür.

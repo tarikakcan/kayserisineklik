@@ -1,16 +1,74 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Hostinger SMTP ile e-posta gönderimi (PHPMailer gerektirmez).
- * SMTP_SECURE=ssl + SMTP_PORT=465 veya SMTP_SECURE=tls + SMTP_PORT=587
- */
+use PHPMailer\PHPMailer\Exception as MailException;
+use PHPMailer\PHPMailer\PHPMailer;
+
 function form_send_mail(string $subject, string $htmlBody, ?string $replyToEmail = null, ?string $replyToName = null): void
+{
+    if (class_exists(PHPMailer::class, false) || class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
+        form_send_mail_phpmailer($subject, $htmlBody, $replyToEmail, $replyToName);
+        return;
+    }
+    form_send_mail_socket($subject, $htmlBody, $replyToEmail, $replyToName);
+}
+
+/** Hostinger önerisi — PHPMailer (composer install sonrası) */
+function form_send_mail_phpmailer(string $subject, string $htmlBody, ?string $replyToEmail, ?string $replyToName): void
+{
+    form_load_env();
+    $host = form_env('SMTP_HOST', 'smtp.hostinger.com');
+    $port = (int) (form_env('SMTP_PORT', '465') ?: 465);
+    $user = form_env('SMTP_USER');
+    $pass = form_env('SMTP_PASS');
+    $secure = strtolower(form_env('SMTP_SECURE', $port === 465 ? 'ssl' : 'tls'));
+    $from = form_env('MAIL_FROM', $user ?: 'info@edekakapi.com');
+    $fromName = form_env('MAIL_FROM_NAME', 'Kayseri Sineklik');
+    $toRaw = form_env('MAIL_TO', $from);
+
+    if ($pass === '') {
+        throw new RuntimeException('SMTP yapılandırması eksik (api/.env içinde SMTP_PASSWORD).');
+    }
+
+    $recipients = form_mail_recipients($toRaw, $from);
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->Host = $host;
+        $mail->SMTPAuth = true;
+        $mail->Username = $user;
+        $mail->Password = $pass;
+        $mail->SMTPSecure = $secure;
+        $mail->Port = $port;
+        $mail->CharSet = PHPMailer::CHARSET_UTF8;
+
+        $mail->setFrom($from, $fromName);
+        foreach ($recipients as $rcpt) {
+            $mail->addAddress($rcpt);
+        }
+        if ($replyToEmail && filter_var($replyToEmail, FILTER_VALIDATE_EMAIL)) {
+            $mail->addReplyTo($replyToEmail, $replyToName ?: $replyToEmail);
+        }
+
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = $htmlBody;
+        $mail->AltBody = trim(strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $htmlBody)));
+
+        $mail->send();
+    } catch (MailException $e) {
+        throw new RuntimeException($mail->ErrorInfo ?: $e->getMessage(), 0, $e);
+    }
+}
+
+/** Yedek — PHPMailer yoksa ham SMTP soketi */
+function form_send_mail_socket(string $subject, string $htmlBody, ?string $replyToEmail, ?string $replyToName): void
 {
     form_load_env();
     $from = form_env('MAIL_FROM', 'info@edekakapi.com');
     $toRaw = form_env('MAIL_TO', $from);
-    $fromName = form_env('MAIL_FROM_NAME', 'Kayseri Sineklik Web');
+    $fromName = form_env('MAIL_FROM_NAME', 'Kayseri Sineklik');
     $host = form_env('SMTP_HOST', 'smtp.hostinger.com');
     $port = (int) (form_env('SMTP_PORT', '465') ?: 465);
     $user = form_env('SMTP_USER', $from);
@@ -18,22 +76,16 @@ function form_send_mail(string $subject, string $htmlBody, ?string $replyToEmail
     $secure = strtolower(trim(form_env('SMTP_SECURE', $port === 465 ? 'ssl' : 'tls')));
 
     if ($pass === '') {
-        throw new RuntimeException('SMTP yapılandırması eksik (api/.env içinde SMTP_PASS).');
+        throw new RuntimeException('SMTP yapılandırması eksik (api/.env içinde SMTP_PASSWORD).');
     }
 
-    $recipients = array_values(array_filter(array_map('trim', preg_split('/[,;]+/', $toRaw))));
-    if (!$recipients) {
-        $recipients = [$from];
-    }
-
-    $ssl = [
+    $recipients = form_mail_recipients($toRaw, $from);
+    $context = stream_context_create(['ssl' => [
         'verify_peer' => true,
         'verify_peer_name' => true,
-        'allow_self_signed' => false,
         'SNI_enabled' => true,
         'peer_name' => $host,
-    ];
-    $context = stream_context_create(['ssl' => $ssl]);
+    ]]);
     $remote = ($secure === 'ssl' ? 'ssl' : 'tcp') . "://{$host}:{$port}";
     $socket = @stream_socket_client($remote, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
     if (!$socket) {
@@ -59,17 +111,12 @@ function form_send_mail(string $subject, string $htmlBody, ?string $replyToEmail
     form_smtp_cmd($socket, 'AUTH LOGIN', [334]);
     form_smtp_cmd($socket, base64_encode($user), [334]);
     form_smtp_cmd($socket, base64_encode($pass), [235]);
-
     form_smtp_cmd($socket, 'MAIL FROM:<' . $from . '>', [250]);
     foreach ($recipients as $rcpt) {
-        if (!filter_var($rcpt, FILTER_VALIDATE_EMAIL)) {
-            continue;
-        }
         form_smtp_cmd($socket, 'RCPT TO:<' . $rcpt . '>', [250, 251]);
     }
     form_smtp_cmd($socket, 'DATA', [354]);
 
-    $body = form_smtp_dot_stuff($htmlBody);
     $headers = [
         'MIME-Version: 1.0',
         'Content-Type: text/html; charset=UTF-8',
@@ -84,11 +131,24 @@ function form_send_mail(string $subject, string $htmlBody, ?string $replyToEmail
         $headers[] = 'Reply-To: ' . $label . '<' . $replyToEmail . '>';
     }
 
-    $message = implode("\r\n", $headers) . "\r\n\r\n" . $body . "\r\n.";
+    $message = implode("\r\n", $headers) . "\r\n\r\n" . form_smtp_dot_stuff($htmlBody) . "\r\n.";
     fwrite($socket, $message . "\r\n");
     form_smtp_expect($socket, [250]);
     form_smtp_cmd($socket, 'QUIT', [221]);
     fclose($socket);
+}
+
+/** @return list<string> */
+function form_mail_recipients(string $toRaw, string $fallback): array
+{
+    $recipients = array_values(array_filter(array_map('trim', preg_split('/[,;]+/', $toRaw))));
+    $out = [];
+    foreach ($recipients ?: [$fallback] as $rcpt) {
+        if (filter_var($rcpt, FILTER_VALIDATE_EMAIL)) {
+            $out[] = $rcpt;
+        }
+    }
+    return $out ?: [$fallback];
 }
 
 function form_smtp_dot_stuff(string $body): string

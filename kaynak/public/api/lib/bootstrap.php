@@ -1,15 +1,29 @@
 <?php
 declare(strict_types=1);
 
+$apiRoot = dirname(__DIR__);
+$vendorAutoload = $apiRoot . '/vendor/autoload.php';
+if (is_file($vendorAutoload)) {
+    require_once $vendorAutoload;
+}
+
 function form_load_env(): void
 {
     static $loaded = false;
     if ($loaded) {
         return;
     }
+
+    $apiRoot = dirname(__DIR__);
+    if (class_exists(\Dotenv\Dotenv::class) && is_readable($apiRoot . '/.env')) {
+        \Dotenv\Dotenv::createImmutable($apiRoot)->safeLoad();
+        $loaded = true;
+        return;
+    }
+
     $candidates = [
-        __DIR__ . '/../.env',
-        dirname(__DIR__, 2) . '/api/.env',
+        $apiRoot . '/.env',
+        dirname($apiRoot) . '/api/.env',
     ];
     foreach ($candidates as $envFile) {
         if (!is_readable($envFile)) {
@@ -53,10 +67,8 @@ function form_parse_env_value(string $raw): string
     return trim($raw);
 }
 
-/** .env / sunucu ortamından güvenli okuma */
-function form_env(string $key, string $default = ''): string
+function form_env_raw(string $key): string
 {
-    form_load_env();
     if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
         return (string) $_ENV[$key];
     }
@@ -67,14 +79,36 @@ function form_env(string $key, string $default = ''): string
     if ($v !== false && $v !== '') {
         return (string) $v;
     }
+    return '';
+}
+
+/** Hostinger (.env) ve eski anahtar adlarını destekler */
+function form_env(string $key, string $default = ''): string
+{
+    form_load_env();
+    $aliases = [
+        'SMTP_USER' => ['SMTP_USERNAME', 'SMTP_USER'],
+        'SMTP_PASS' => ['SMTP_PASSWORD', 'SMTP_PASS'],
+        'SMTP_SECURE' => ['SMTP_ENCRYPTION', 'SMTP_SECURE'],
+        'MAIL_FROM' => ['SMTP_FROM', 'MAIL_FROM'],
+        'MAIL_FROM_NAME' => ['SMTP_FROM_NAME', 'MAIL_FROM_NAME'],
+        'MAIL_TO' => ['MAIL_TO', 'SMTP_FROM', 'MAIL_FROM'],
+    ];
+    foreach ($aliases[$key] ?? [$key] as $candidate) {
+        $value = form_env_raw($candidate);
+        if ($value !== '') {
+            return $value;
+        }
+    }
     return $default;
 }
 
 function form_env_file(): ?string
 {
+    $apiRoot = dirname(__DIR__);
     $candidates = [
-        __DIR__ . '/../.env',
-        dirname(__DIR__, 2) . '/api/.env',
+        $apiRoot . '/.env',
+        dirname($apiRoot) . '/api/.env',
     ];
     foreach ($candidates as $path) {
         if (is_readable($path)) {
