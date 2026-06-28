@@ -48,13 +48,13 @@ function calcColorSwatches(depth = 0) {
 }
 
 function calcQtyRow() {
-  return `<div class="flex items-stretch gap-2">
-<div class="flex items-center border border-border rounded-md overflow-hidden shrink-0 bg-background" title="Adet">
-<button type="button" id="calc-qty-minus" class="px-2.5 py-2 text-lg leading-none hover:bg-muted transition-colors" aria-label="Adet azalt">−</button>
-<span id="calc-qty" class="px-2.5 py-2 min-w-[2rem] text-center text-sm font-semibold tabular-nums border-x border-border">1</span>
-<button type="button" id="calc-qty-plus" class="px-2.5 py-2 text-lg leading-none hover:bg-muted transition-colors" aria-label="Adet artır">+</button>
+  return `<div class="flex items-stretch gap-2 calc-qty-row">
+<div class="calc-qty-group flex items-center border border-border rounded-md shrink-0 bg-background" title="Adet">
+<button type="button" class="calc-qty-btn calc-qty-minus px-2.5 py-2 text-lg leading-none hover:bg-muted transition-colors" aria-label="Adet azalt">−</button>
+<span class="calc-qty-value px-2.5 py-2 min-w-[2rem] text-center text-sm font-semibold tabular-nums border-x border-border">1</span>
+<button type="button" class="calc-qty-btn calc-qty-plus px-2.5 py-2 text-lg leading-none hover:bg-muted transition-colors" aria-label="Adet artır">+</button>
 </div>
-<button type="button" id="calc-btn" class="flex-1 py-2 px-3 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90">Fiyat Hesapla</button>
+<button type="button" id="calc-btn" class="flex-1 min-w-0 py-2 px-3 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90">Fiyat Hesapla</button>
 </div>`
 }
 

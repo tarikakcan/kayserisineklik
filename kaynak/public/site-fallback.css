@@ -24,9 +24,35 @@ main img:not([class*="aspect"]) {
 
 #calculator input,
 #calculator select,
-#calculator button {
+#calculator button#calc-btn {
   box-sizing: border-box;
   max-width: 100%;
+}
+
+#calculator .calc-qty-group {
+  flex-shrink: 0;
+}
+
+#calculator .calc-qty-btn {
+  flex-shrink: 0;
+  min-width: 2.25rem;
+  max-width: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+#calculator .calc-qty-value {
+  flex-shrink: 0;
+  user-select: none;
+}
+
+#calculator .calc-qty-row {
+  flex-wrap: nowrap;
+}
+
+#calculator .calc-qty-row > #calc-btn {
+  min-width: 0;
 }
 
 #calculator .space-y-4 > * + * {

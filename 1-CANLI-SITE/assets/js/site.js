@@ -124,9 +124,8 @@
     const hEl = $('#calc-h', box)
     const optEl = $('#calc-opt', box)
     const colorEl = $('#calc-color', box)
-    const qtyEl = $('#calc-qty', box)
-    const qtyMinus = $('#calc-qty-minus', box)
-    const qtyPlus = $('#calc-qty-plus', box)
+    const qtyEl = $('.calc-qty-value', box)
+    const qtyGroup = $('.calc-qty-group', box)
     const colorBtns = $$('.calc-color-swatch', box)
     const priceEl = $('#calc-price', box)
     const detailEl = $('#calc-detail', box)
@@ -138,6 +137,8 @@
     let qty = 1
 
     function getQty() {
+      const fromDom = parseInt(qtyEl?.textContent || '', 10)
+      if (Number.isFinite(fromDom)) qty = fromDom
       return Math.max(1, Math.min(99, qty))
     }
 
@@ -156,12 +157,14 @@
       const { area, price, perM2 } = calcPrice(wEl.value, hEl.value, row)
       const total = price * q
       priceEl.textContent = total > 0 ? `₺${formatTry(total)}` : '—'
-      if (perM2 > 0 && q > 1) {
-        detailEl.textContent = `${q} adet × ${area.toFixed(2)} m² × ₺${formatTry(perM2)}/m² (KDV hariç)`
-      } else if (perM2 > 0) {
-        detailEl.textContent = `${area.toFixed(2)} m² × ₺${formatTry(perM2)}/m² (KDV hariç)`
-      } else {
-        detailEl.textContent = 'Ölçü girin ve Fiyat Hesapla\'ya basın'
+      if (detailEl) {
+        if (perM2 > 0 && q > 1) {
+          detailEl.textContent = `${q} adet × ${area.toFixed(2)} m² × ₺${formatTry(perM2)}/m² (KDV hariç)`
+        } else if (perM2 > 0) {
+          detailEl.textContent = `${area.toFixed(2)} m² × ₺${formatTry(perM2)}/m² (KDV hariç)`
+        } else {
+          detailEl.textContent = 'Ölçü girin ve Fiyat Hesapla\'ya basın'
+        }
       }
       if (waEl) {
         const parts = [
@@ -181,18 +184,25 @@
 
     refresh()
 
+    wEl.addEventListener('input', refresh)
+    hEl.addEventListener('input', refresh)
+    if (optEl) optEl.addEventListener('change', refresh)
+    if (calcBtn) calcBtn.addEventListener('click', refresh)
+    if (qtyGroup) {
+      qtyGroup.addEventListener('click', (e) => {
+        const btn = e.target.closest('.calc-qty-minus, .calc-qty-plus')
+        if (!btn || !qtyGroup.contains(btn)) return
+        e.preventDefault()
+        if (btn.classList.contains('calc-qty-minus')) setQty(getQty() - 1)
+        else setQty(getQty() + 1)
+      })
+    }
+
     try {
       const map = await fetchPricing()
       row = normalizeRow(slug, map)
       refresh()
     } catch { /* fallback row already set */ }
-
-    wEl.addEventListener('input', refresh)
-    hEl.addEventListener('input', refresh)
-    if (optEl) optEl.addEventListener('change', refresh)
-    if (calcBtn) calcBtn.addEventListener('click', refresh)
-    if (qtyMinus) qtyMinus.addEventListener('click', () => setQty(getQty() - 1))
-    if (qtyPlus) qtyPlus.addEventListener('click', () => setQty(getQty() + 1))
 
     colorBtns.forEach(btn => {
       btn.addEventListener('click', () => {
