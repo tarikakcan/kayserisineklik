@@ -1,3 +1,5 @@
+import olcuBlocks from './blog-content/sineklik-olcusu-nasil-alinir.js'
+
 export const blogPosts = [
   {
     slug: 'sineklik-cesitleri-nelerdir',
@@ -31,16 +33,11 @@ export const blogPosts = [
   {
     slug: 'sineklik-olcusu-nasil-alinir',
     title: 'Sineklik Ölçüsü Nasıl Alınır? Adım Adım Rehber',
-    description: 'Doğru sineklik ölçüsü almak için profesyonel ipuçları. Genişlik, yükseklik ve montaj tipi nasıl belirlenir?',
+    description: 'Pencere ve kapı sinekliği ölçüsünü contadan contaya nasıl alacağınızı, kasa payını ve sık yapılan hataları adım adım anlatıyoruz.',
     date: '2025-05-25',
-    readTime: '4 dk',
-    cover: 'https://customer-assets.emergentagent.com/job_262fdf16-1181-40c4-aecb-3d93097f2d17/artifacts/oybme104_menteseli-sineklik-bipencerecom-hesapla.jpg',
-    content: [
-      { h: '1. Pencere Tipini Belirleyin', p: 'Pencerenizin sabit, açılır veya sürgülü olup olmadığını belirleyin. Buna göre uygun sineklik modeli farklılaşır.' },
-      { h: '2. Genişlik Ölçüsünü Alın', p: 'Pencere kasasının iç kenarından iç kenarına genişliği milimetre cinsinden ölçün. 3 farklı noktadan ölçüp en küçüğünü baz alın.' },
-      { h: '3. Yükseklik Ölçüsünü Alın', p: 'Aynı şekilde yüksekliği de üst-alt iç kenarlardan ölçün. Pervaz çıkıntıları varsa dikkate alın.' },
-      { h: '4. Profesyonel Destek Alın', p: 'Yanlış ölçü maliyetli olabilir. Edeka Kapı ekibi olarak Kayseri içinde ücretsiz keşif ve ölçü hizmeti veriyoruz.' }
-    ]
+    readTime: '12 dk',
+    cover: '/assets/blog/sineklik-olcusu-nasil-alinir.png',
+    blocks: olcuBlocks,
   },
   {
     slug: 'kedi-sinekligi-neden-onemli',

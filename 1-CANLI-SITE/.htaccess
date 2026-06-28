@@ -4,6 +4,10 @@ DirectoryIndex index.html
   RewriteEngine On
   RewriteBase /
 
+  # Liste sayfaları: /urunler ve /blog klasör kökü (index.html)
+  RewriteRule ^urunler/?$ urunler/index.html [L]
+  RewriteRule ^blog/?$ blog/index.html [L]
+
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]

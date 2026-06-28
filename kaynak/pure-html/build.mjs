@@ -6,6 +6,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { renderProductContentLeft, renderPriceSection } from './product-content-render.mjs'
+import { renderBlogBlocks } from './blog-content-render.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
@@ -268,6 +269,9 @@ function copyAssets() {
   fs.mkdirSync(path.join(OUT, 'assets/js'), { recursive: true })
   fs.copyFileSync(path.join(__dirname, 'assets/site.js'), path.join(OUT, 'assets/js/site.js'))
   copyDir(path.join(ROOT, 'public/colors'), path.join(OUT, 'assets/colors'))
+  if (fs.existsSync(path.join(ROOT, 'public/blog'))) {
+    copyDir(path.join(ROOT, 'public/blog'), path.join(OUT, 'assets/blog'))
+  }
   copyDir(path.join(ROOT, 'public/api'), path.join(OUT, 'api'))
   fs.copyFileSync(path.join(ROOT, 'public/.htaccess'), path.join(OUT, '.htaccess'))
   writeSeoFiles()
@@ -317,7 +321,7 @@ function pageHome() {
 <span class="absolute top-3 right-3 px-2 py-1 text-[10px] font-bold bg-primary text-primary-foreground rounded-full price-badge" data-slug="${p.slug}">₺${p.pricePerM2}/m² + KDV</span></div>
 <div class="p-5"><h3 class="font-display font-bold text-xl">${esc(p.name)}</h3><p class="text-sm text-muted-foreground mt-2">${esc(p.tagline)}</p></div></a>`).join('')
   const blogs = blogPosts.slice(0, 3).map(b => `<a href="${url(`blog/${b.slug}.html`)}" class="group rounded-3xl overflow-hidden bg-card border block">
-<div class="aspect-[16/10] overflow-hidden"><img src="${esc(b.cover)}" alt="${esc(b.title)}" class="h-full w-full object-cover"/></div>
+<div class="aspect-[16/10] overflow-hidden"><img src="${esc(blogCoverSrc(b.cover))}" alt="${esc(b.title)}" class="h-full w-full object-cover"/></div>
 <div class="p-5"><h3 class="font-display font-bold text-lg">${esc(b.title)}</h3><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
   write('index.html', layout({
     title: `${site.name} | Plise, Menteşeli ve Sürgülü Sineklik`,
@@ -343,10 +347,11 @@ function pageProducts() {
 <img src="${esc(p.image)}" alt="${esc(p.name)} — Kayseri sineklik modeli" class="aspect-[4/3] object-cover w-full"/>
 <div class="p-4"><h2 class="font-semibold">${esc(p.name)}</h2><p class="text-sm text-muted-foreground">${esc(p.tagline)}</p>
 <span class="text-sm font-semibold text-primary price-badge" data-slug="${p.slug}">₺${p.pricePerM2}/m² + KDV</span></div></a>`).join('')
-  write('urunler.html', layout({
+  write('urunler/index.html', layout({
     title: 'Sineklik Modelleri',
     description: '8 sineklik modeli',
     canonical: '/urunler',
+    depth: 1,
     jsonLdData: schemaBreadcrumb([
       { name: 'Anasayfa', href: '/' },
       { name: 'Ürünler', href: '/urunler' },
@@ -474,11 +479,12 @@ function pageStatic(name, title, h1, content) {
 
 function pageBlogList() {
   const cards = blogPosts.map(b => `<a href="${url(`blog/${b.slug}.html`)}" class="rounded-2xl border bg-card overflow-hidden block">
-<img src="${esc(b.cover)}" alt="${esc(b.title)}" class="aspect-[16/10] object-cover w-full"/><div class="p-5"><h2 class="font-bold">${esc(b.title)}</h2><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
-  write('blog.html', layout({
+<img src="${esc(blogCoverSrc(b.cover))}" alt="${esc(b.title)}" class="aspect-[16/10] object-cover w-full"/><div class="p-5"><h2 class="font-bold">${esc(b.title)}</h2><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
+  write('blog/index.html', layout({
     title: 'Blog',
     description: 'Sineklik rehberi',
     canonical: '/blog',
+    depth: 1,
     jsonLdData: schemaBreadcrumb([
       { name: 'Anasayfa', href: '/' },
       { name: 'Blog', href: '/blog' },
@@ -487,21 +493,39 @@ function pageBlogList() {
   }))
 }
 
+function blogCoverSrc(cover, depth = 0) {
+  if (!cover) return ''
+  if (cover.startsWith('http') || cover.startsWith('/')) return cover
+  const p = depth ? '../'.repeat(depth) : ''
+  return p + cover
+}
+
 function pageBlogPost(b) {
-  const sections = b.content.map(c => `<h2 class="text-xl font-bold mt-8">${esc(c.h)}</h2><p class="text-muted-foreground mt-2">${esc(c.p)}</p>`).join('')
+  const depth = 1
+  const assetPrefix = '../'
+  const cover = blogCoverSrc(b.cover, depth)
+  const blocks = b.blocks?.map((block) => {
+    if (block.type === 'cta' && block.href === '__WA_OLCU__') {
+      return { ...block, href: wa('Merhaba, sineklik ölçüsü konusunda destek almak istiyorum.') }
+    }
+    return block
+  })
+  const bodyContent = blocks
+    ? renderBlogBlocks(blocks, { esc, assetPrefix })
+    : b.content.map(c => `<h2 class="text-xl font-bold mt-8">${esc(c.h)}</h2><p class="text-muted-foreground mt-2">${esc(c.p)}</p>`).join('')
   write(`blog/${b.slug}.html`, layout({
     title: b.title,
     description: b.description,
     canonical: `/blog/${b.slug}`,
-    depth: 1,
+    depth,
     jsonLdData: schemaBreadcrumb([
       { name: 'Anasayfa', href: '/' },
       { name: 'Blog', href: '/blog' },
       { name: b.title, href: `/blog/${b.slug}` },
     ]),
-    body: `<article class="container py-10 max-w-3xl"><div class="text-xs text-muted-foreground mb-4"><a href="${url('blog.html')}">Blog</a></div>
+    body: `<article class="container py-10 max-w-3xl prose-blog"><div class="text-xs text-muted-foreground mb-4"><a href="${url('blog.html')}">Blog</a></div>
 <h1 class="text-3xl font-extrabold">${esc(b.title)}</h1><p class="mt-3 text-lg text-muted-foreground">${esc(b.description)}</p>
-<img src="${esc(b.cover)}" alt="${esc(b.title)}" class="mt-6 rounded-2xl w-full aspect-video object-cover"/>${sections}</article>`
+${blocks ? '' : `<img src="${esc(cover)}" alt="${esc(b.title)}" class="mt-6 rounded-2xl w-full border object-cover"/>`}${bodyContent}</article>`
   }))
 }
 
