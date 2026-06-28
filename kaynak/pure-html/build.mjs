@@ -22,6 +22,7 @@ const { getProductContent } = await import(pathToFileURL(path.join(ROOT, 'lib/pr
 const { legalNav, legalMeta } = await import(pathToFileURL(path.join(ROOT, 'lib/legal/legal-config.js')).href)
 const { gizlilikPolitikasi } = await import(pathToFileURL(path.join(ROOT, 'lib/legal/gizlilik-politikasi.js')).href)
 const { kvkkAydinlatmaMetni } = await import(pathToFileURL(path.join(ROOT, 'lib/legal/kvkk-aydinlatma-metni.js')).href)
+const { kullanimKosullari } = await import(pathToFileURL(path.join(ROOT, 'lib/legal/kullanim-kosullari.js')).href)
 
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 const formatPrice = (n) => Number(n).toLocaleString('tr-TR')
@@ -304,6 +305,7 @@ function writeSeoFiles() {
     { loc: `${site.url}/iletisim`, priority: '0.8' },
     { loc: `${site.url}/gizlilik-politikasi`, priority: '0.4' },
     { loc: `${site.url}/kvkk-aydinlatma-metni`, priority: '0.4' },
+    { loc: `${site.url}/kullanim-kosullari`, priority: '0.4' },
     ...products.map(p => ({ loc: `${site.url}/urunler/${p.slug}`, priority: '0.9' })),
     ...blogPosts.map(b => ({ loc: `${site.url}/blog/${b.slug}`, priority: '0.7' })),
   ]
@@ -580,6 +582,7 @@ pageBlogList()
 blogPosts.forEach(pageBlogPost)
 pageLegal(gizlilikPolitikasi)
 pageLegal(kvkkAydinlatmaMetni)
+pageLegal(kullanimKosullari)
 page404()
 syncAdminIntoLive()
 console.log('Tamam! npm run deploy:github → GitHub main (canlı)')

@@ -66,8 +66,21 @@ export function renderLegalPage(doc, { esc, site, url, legalNav, legalMeta }) {
         `<div class="legal-right-card"><span class="legal-right-num">${i + 1}</span><h3>${esc(r.title)}</h3><p>${esc(r.text)}</p></div>`
       ).join('')}</div>`
     }
+    if (section.subsections?.length) {
+      inner += `<div class="legal-subsections">${section.subsections.map(sub =>
+        `<div class="legal-subsection"><h3>${esc(sub.title)}</h3><p>${esc(sub.text)}</p></div>`
+      ).join('')}</div>`
+    }
+    if (section.relatedLegal?.length) {
+      inner += `<div class="legal-related-grid">${section.relatedLegal.map(link =>
+        `<a href="${url(`${link.slug}.html`)}" class="legal-related-card"><strong>${esc(link.title)}</strong><span>${esc(link.text)}</span></a>`
+      ).join('')}</div>`
+    }
     if (section.contactMethods) {
       inner += renderContactMethods({ esc, site })
+    }
+    if (section.footnote && !section.controller) {
+      inner += `<p class="legal-footnote legal-section-footnote">${esc(section.footnote)}</p>`
     }
     if (section.controller) {
       inner += renderController({
