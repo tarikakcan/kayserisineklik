@@ -74,7 +74,7 @@ export default [
   { type: 'h3', text: 'Bizim eklediğimiz kasa payı' },
   {
     type: 'img',
-    src: 'assets/blog/sineklik-olcusu-nasil-alinir.png',
+    src: 'assets/blog/sineklik-olcusu-nasil-alinir.webp',
     alt: 'Sineklik ölçüsü: contadan contaya en ve boy ölçümü ile 4 cm kasa payı eklenmiş toplam ölçü örneği',
     caption: 'Contadan contaya iç ölçü (örnek: 50×120 cm) + toplam 8 cm kasa payı = üretim ölçüsü (58×128 cm).',
   },

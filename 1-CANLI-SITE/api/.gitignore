@@ -1,2 +1,4 @@
-data/
+data/rate-limit/
 .env
+composer.phar
+/vendor/

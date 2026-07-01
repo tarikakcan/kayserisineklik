@@ -1,11 +1,12 @@
 /**
  * Yasal sayfa HTML üretici
  */
+
 function renderContactMethods({ esc, site }) {
   return `<div class="legal-contact-grid">
-<a href="mailto:${esc(site.email)}" class="legal-contact-card"><span>E-posta</span><strong>${esc(site.email)}</strong></a>
-<div class="legal-contact-card"><span>Posta</span><strong>${esc(site.address.full)}</strong></div>
-<a href="tel:${site.phoneIntl}" class="legal-contact-card"><span>Telefon</span><strong>${esc(site.phone)}</strong></a>
+<a href="mailto:${esc(site.email)}" class="legal-contact-card"><span class="legal-contact-icon" aria-hidden="true">✉</span><span class="legal-contact-label">E-posta</span><strong>${esc(site.email)}</strong></a>
+<div class="legal-contact-card"><span class="legal-contact-icon" aria-hidden="true">📍</span><span class="legal-contact-label">Posta</span><strong>${esc(site.address.full)}</strong></div>
+<a href="tel:${site.phoneIntl}" class="legal-contact-card"><span class="legal-contact-icon" aria-hidden="true">☎</span><span class="legal-contact-label">Telefon</span><strong>${esc(site.phone)}</strong></a>
 </div>`
 }
 
@@ -23,15 +24,49 @@ ${footnote ? `<p class="legal-footnote">${esc(footnote)}</p>` : ''}
 </div>`
 }
 
-export function renderLegalPage(doc, { esc, site, url, legalNav, legalMeta }) {
+function renderLegalCta({ esc, site, wa, formConsentBlock }) {
+  return `<section class="legal-cta-band" aria-labelledby="legal-cta-heading">
+<div class="container py-12 md:py-16">
+<div class="legal-cta-grid">
+<div class="legal-cta-copy">
+<p class="legal-cta-eyebrow">Ölçüye özel üretim</p>
+<h2 id="legal-cta-heading" class="legal-cta-title">Sinekliğiniz İçin <span>Fiyat Teklifi</span> Alın</h2>
+<p class="legal-cta-text">Plise, menteşeli, sürgülü ve pencere sinekliği modellerimiz için WhatsApp veya form ile hızlıca teklif isteyin. Kayseri içi montaj, 81 il kargo.</p>
+<div class="legal-cta-actions">
+<a href="${wa()}" target="_blank" rel="noreferrer" class="legal-cta-btn legal-cta-btn--wa">WhatsApp Teklif</a>
+<a href="tel:${site.phoneIntl}" class="legal-cta-btn legal-cta-btn--outline">${esc(site.phone)}</a>
+</div>
+</div>
+<div class="legal-cta-form-wrap">
+<p class="legal-cta-form-title">Bize Yazın</p>
+<form id="contact-form" class="legal-cta-form">
+<input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off"/>
+<div class="legal-cta-form-row">
+<input name="name" required placeholder="Ad Soyad *" class="legal-cta-input"/>
+<input name="phone" required placeholder="Telefon *" class="legal-cta-input"/>
+</div>
+<input name="email" type="email" placeholder="E-posta" class="legal-cta-input"/>
+<input type="hidden" name="subject" value="Yasal sayfa iletişim"/>
+<textarea name="message" rows="3" placeholder="Mesajınız" class="legal-cta-input"></textarea>
+${formConsentBlock()}
+<button type="submit" class="legal-cta-submit">Gönder</button>
+<p id="contact-msg" class="text-sm hidden"></p>
+</form>
+</div>
+</div></div></section>`
+}
+
+export function renderLegalPage(doc, { esc, site, url, legalNav, legalMeta, wa, formConsentBlock }) {
   const navItems = legalNav.map(item => {
     const active = item.slug === doc.slug
     const href = url(`${item.slug}.html`)
-    const cls = active
-      ? 'legal-nav-link legal-nav-link--active'
-      : 'legal-nav-link'
-    return `<li><a href="${href}" class="${cls}">${esc(item.label)}</a></li>`
+    const cls = active ? 'legal-pill legal-pill--active' : 'legal-pill'
+    return `<a href="${href}" class="${cls}">${esc(item.label)}</a>`
   }).join('')
+
+  const tocItems = doc.sections.map(section =>
+    `<a href="#bolum-${esc(section.num)}" class="legal-toc-link">${esc(section.num)}. ${esc(section.title)}</a>`
+  ).join('')
 
   const sections = doc.sections.map(section => {
     let inner = ''
@@ -59,7 +94,7 @@ export function renderLegalPage(doc, { esc, site, url, legalNav, legalMeta }) {
       ).join('')}</div>`
     }
     if (section.important) {
-      inner += `<div class="legal-callout"><strong>Önemli:</strong> ${esc(section.important)}</div>`
+      inner += `<div class="legal-callout"><span class="legal-callout-badge">Önemli</span><p>${esc(section.important)}</p></div>`
     }
     if (section.rights?.length) {
       inner += `<div class="legal-rights-grid">${section.rights.map((r, i) =>
@@ -92,34 +127,49 @@ export function renderLegalPage(doc, { esc, site, url, legalNav, legalMeta }) {
       })
     }
     return `<section class="legal-section" id="bolum-${esc(section.num)}">
-<div class="legal-section-head"><span class="legal-section-num">${esc(section.num)}</span><h2>${esc(section.title)}</h2></div>
+<div class="legal-section-head">
+<span class="legal-section-num" aria-hidden="true">${esc(section.num)}</span>
+<h2>${esc(section.title)}</h2>
+</div>
 <div class="legal-section-body">${inner}</div>
 </section>`
   }).join('')
 
   const introNotice = doc.notice
-    ? `<div class="legal-callout legal-callout--soft"><strong>Önemli:</strong> ${esc(doc.notice)}</div>`
+    ? `<div class="legal-callout legal-callout--soft"><span class="legal-callout-badge">Bilgi</span><p>${esc(doc.notice)}</p></div>`
     : ''
 
-  return `<section class="hero-gradient legal-hero">
-<div class="container py-12 md:py-14">
-<p class="text-xs font-semibold uppercase tracking-wider text-primary">Yasal</p>
-<h1 class="text-3xl md:text-4xl font-extrabold mt-2">${esc(doc.title)}</h1>
-<p class="mt-3 text-lg text-muted-foreground max-w-2xl">${esc(doc.subtitle)}</p>
+  const cta = wa && formConsentBlock
+    ? renderLegalCta({ esc, site, wa, formConsentBlock })
+    : ''
+
+  return `<section class="legal-hero-dark">
+<div class="container py-10 md:py-14">
+<nav class="legal-breadcrumb" aria-label="Breadcrumb">
+<a href="${url('index.html')}">Anasayfa</a><span aria-hidden="true">›</span><span>Yasal</span><span aria-hidden="true">›</span><span aria-current="page">${esc(doc.title)}</span>
+</nav>
+<p class="legal-hero-eyebrow">Yasal Metinler</p>
+<h1 class="legal-hero-title">${esc(doc.title)}</h1>
+<p class="legal-hero-subtitle">${esc(doc.subtitle)}</p>
+<p class="legal-hero-updated">Son güncelleme: ${esc(doc.updated)}</p>
 </div></section>
-<section class="container py-10 md:py-12">
-<div class="legal-layout">
-<aside class="legal-sidebar">
-<nav class="legal-sidebar-nav" aria-label="Yasal sayfalar">
-<p class="legal-sidebar-title">Yasal Metinler</p>
-<ul>${navItems}</ul>
-<a href="${url('index.html')}" class="legal-back-home">← Ana sayfa</a>
-</nav></aside>
+<section class="legal-nav-bar">
+<div class="container py-4">
+<nav class="legal-pill-nav" aria-label="Yasal sayfalar">${navItems}</nav>
+</div></section>
+<section class="legal-content">
+<div class="container py-10 md:py-14">
 <article class="legal-article">
 <div class="legal-intro-card">
-<p>${esc(doc.lead)}</p>
+<p class="legal-intro-lead">${esc(doc.lead)}</p>
 ${introNotice}
 </div>
+<nav class="legal-toc" aria-label="İçindekiler">
+<p class="legal-toc-title">İçindekiler</p>
+<div class="legal-toc-links">${tocItems}</div>
+</nav>
 ${sections}
-</article></div></section>`
+</article>
+</div></section>
+${cta}`
 }

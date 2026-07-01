@@ -8,7 +8,7 @@ export const products = [
     shortName: 'Dikey Plise',
     pricePerM2: 1450,
     minPrice: 850,
-    image: 'https://customer-assets.emergentagent.com/job_262fdf16-1181-40c4-aecb-3d93097f2d17/artifacts/xnicr7at_dikey-plise-sineklik-bipencerecom-hesapla.jpg',
+    image: '/assets/products/dikey-plise-sineklik.webp',
     selectionType: 'color',
     options: [...FRAME_COLOR_OPTIONS],
     tagline: 'Pencereler için yukarıdan aşağıya çalışan, estetik ve dayanıklı plise sineklik.',
@@ -26,7 +26,7 @@ export const products = [
     shortName: 'Duble Plise',
     pricePerM2: 1750,
     minPrice: 1100,
-    image: 'https://customer-assets.emergentagent.com/job_262fdf16-1181-40c4-aecb-3d93097f2d17/artifacts/g3q50959_duble-plise-sineklik-bipencerecom-hesapla.jpg',
+    image: '/assets/products/duble-plise-sineklik.webp',
     selectionType: 'color',
     options: [...FRAME_COLOR_OPTIONS],
     tagline: 'Geniş açıklıklar için ortadan açılan çift kanatlı plise sineklik sistemi.',
@@ -44,7 +44,7 @@ export const products = [
     shortName: 'Yatay Plise',
     pricePerM2: 1550,
     minPrice: 900,
-    image: 'https://customer-assets.emergentagent.com/job_262fdf16-1181-40c4-aecb-3d93097f2d17/artifacts/d85u5wqo_yatay-plise-sineklik-bipencerecom-hesapla.jpg',
+    image: '/assets/products/yatay-plise-sineklik.webp',
     selectionType: 'direction',
     options: ['Sağdan Açılır', 'Soldan Açılır', 'Ortadan Açılır'],
     tagline: 'Kapı ve geniş pencereler için yana doğru hareket eden yatay plise sistem.',
@@ -62,7 +62,7 @@ export const products = [
     shortName: 'Menteşeli',
     pricePerM2: 1100,
     minPrice: 750,
-    image: 'https://customer-assets.emergentagent.com/job_262fdf16-1181-40c4-aecb-3d93097f2d17/artifacts/oybme104_menteseli-sineklik-bipencerecom-hesapla.jpg',
+    image: '/assets/products/menteseli-sineklik.webp',
     selectionType: 'direction',
     options: ['Sağdan Açılır', 'Soldan Açılır'],
     tagline: 'Kapı gibi açılıp kapanan, sağlam menteşe sistemiyle uzun ömürlü sineklik.',
@@ -80,7 +80,7 @@ export const products = [
     shortName: 'Kapı',
     pricePerM2: 1650,
     minPrice: 1100,
-    image: '/assets/products/kapi-sinekligi.png',
+    image: '/assets/products/kapi-sinekligi.webp',
     selectionType: 'direction',
     options: ['Sağdan Açılır', 'Soldan Açılır', 'Çift Kanat', 'Sürgülü'],
     tagline: 'Balkon, teras ve giriş kapıları için özel ölçüde üretilen kapı sineklikleri.',
@@ -98,7 +98,7 @@ export const products = [
     shortName: 'Pencere',
     pricePerM2: 900,
     minPrice: 450,
-    image: 'https://images.pexels.com/photos/17756267/pexels-photo-17756267.jpeg',
+    image: '/assets/products/pencere-sinekligi.webp',
     selectionType: 'color',
     options: [...FRAME_COLOR_OPTIONS],
     tagline: 'Klasik sabit kasalı pencere sineklikleri – ekonomik ve dayanıklı.',
@@ -116,7 +116,7 @@ export const products = [
     shortName: 'Kedi',
     pricePerM2: 1350,
     minPrice: 850,
-    image: '/assets/products/kedi-sinekligi.png',
+    image: '/assets/products/kedi-sinekligi.webp',
     selectionType: 'color',
     options: [...FRAME_COLOR_OPTIONS],
     tagline: 'Kedi pençesine dayanıklı güçlendirilmiş polyester telli sineklik.',
@@ -134,7 +134,8 @@ export const products = [
     shortName: 'Sürgülü',
     pricePerM2: 1450,
     minPrice: 1050,
-    image: 'https://images.pexels.com/photos/13600834/pexels-photo-13600834.jpeg',
+    image: '/assets/products/surgulu-sineklik.webp',
+    imageClass: 'product-image-wide',
     selectionType: 'direction',
     options: ['Sağdan Açılır', 'Soldan Açılır', 'Çift Kanat'],
     tagline: 'Ray üzerinde yana kayan sürgülü sineklik – ideal pratik çözüm.',
@@ -145,7 +146,61 @@ export const products = [
       'Tek/çift kanat seçeneği',
       'Sürgülü PVC pencerelere ideal'
     ]
+  },
+  {
+    slug: 'sineklik-tamir-bandi',
+    name: 'Sineklik Tamir Bandı',
+    shortName: 'Tamir Bandı',
+    saleType: 'package',
+    pricePerM2: 0,
+    minPrice: 99,
+    image: '/assets/products/sineklik-tamir-bandi.webp',
+    imageClass: 'product-image-contained',
+    gallery: [
+      '/assets/products/sineklik-tamir-bandi.webp',
+      '/assets/products/sineklik-tamir-bandi-steps.webp',
+      '/assets/products/sineklik-tamir-bandi-rolls.webp',
+    ],
+    colorOptions: ['Gri', 'Siyah'],
+    packageOptions: ['Tek Parça', '12\'li Paket', '24\'lü Paket', '36\'lı Paket'],
+    tagline: 'Yırtılan veya delinen sinekliklerinizi yeniden taktırmadan, dakikalar içinde onarmanızı sağlayan kendinden yapışkanlı tamir bandı.',
+    description: '48 mm genişlik, 2 metre uzunluk — gri ve siyah renk seçenekleriyle, pencere ve kapı sinekliklerinin neredeyse tamamında kullanılabilir.',
+    features: [
+      'Kendinden yapışkanlı, ek yapıştırıcı gerekmez',
+      '48 mm x 2 m — gri ve siyah renk',
+      'Tek parça veya 12\'li / 24\'lü / 36\'lı paket',
+      'Türkiye geneline kargo ile gönderim',
+    ],
   }
 ];
+
+const REPAIR_COLORS = ['Gri', 'Siyah'];
+const REPAIR_PACKAGES = ['Tek Parça', '12\'li Paket', '24\'lü Paket', '36\'lı Paket'];
+
+/** KDV hariç liste fiyatları — admin panelinden güncellenince API önceliklidir */
+export const REPAIR_PACKAGE_PRICES = {
+  'Tek Parça': 99,
+  '12\'li Paket': 990,
+  '24\'lü Paket': 1860,
+  '36\'lı Paket': 2610,
+};
+
+export const repairTapeFallback = {
+  kdv_orani: 0.20,
+  variants: REPAIR_COLORS.flatMap((renk) =>
+    REPAIR_PACKAGES.map((paket) => ({
+      id: `${renk.toLowerCase()}-48-200-48-${paket.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+      renk,
+      en: 48,
+      boy: 200,
+      genislik: 48,
+      paket,
+      fiyat: REPAIR_PACKAGE_PRICES[paket] ?? 0,
+    }))
+  ),
+};
+
+export const repairTapeMinPrice = () =>
+  Math.min(...Object.values(REPAIR_PACKAGE_PRICES).filter(n => n > 0));
 
 export const getProduct = (slug) => products.find(p => p.slug === slug);

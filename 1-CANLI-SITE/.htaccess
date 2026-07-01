@@ -5,8 +5,11 @@ DirectoryIndex index.html
   RewriteBase /
 
   # Liste sayfaları: /urunler ve /blog klasör kökü (index.html)
+  RewriteRule ^(urunler|blog|bolgeler)/index/?$ /$1 [R=301,L]
+
   RewriteRule ^urunler/?$ urunler/index.html [L]
   RewriteRule ^blog/?$ blog/index.html [L]
+  RewriteRule ^bolgeler/?$ bolgeler/index.html [L]
 
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
@@ -16,4 +19,11 @@ DirectoryIndex index.html
   RewriteRule ^(.+?)/?$ $1.html [L]
 
   ErrorDocument 404 /404.html
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 </IfModule>

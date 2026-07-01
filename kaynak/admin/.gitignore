@@ -1,2 +1,4 @@
 .env
 data/pricing.json
+data/repair-tape.json
+data/rate-limit/

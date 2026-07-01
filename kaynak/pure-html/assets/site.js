@@ -139,8 +139,40 @@
   // Mobile menu
   const menuBtn = $('#menu-btn')
   const mobileMenu = $('#mobile-menu')
+  const menuBackdrop = $('#mobile-menu-backdrop')
+
   if (menuBtn && mobileMenu) {
-    menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'))
+    const setMenuOpen = (open) => {
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false')
+      menuBtn.setAttribute('aria-label', open ? 'Menüyü kapat' : 'Menüyü aç')
+      document.body.classList.toggle('mobile-menu-open', open)
+      mobileMenu.classList.toggle('is-open', open)
+      mobileMenu.style.display = open ? 'flex' : 'none'
+      mobileMenu.setAttribute('aria-hidden', open ? 'false' : 'true')
+      if (menuBackdrop) {
+        menuBackdrop.classList.toggle('is-open', open)
+        menuBackdrop.style.display = open ? 'block' : 'none'
+        menuBackdrop.setAttribute('aria-hidden', open ? 'false' : 'true')
+      }
+    }
+
+    const toggleMenu = (e) => {
+      if (e) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+      setMenuOpen(!mobileMenu.classList.contains('is-open'))
+    }
+
+    menuBtn.addEventListener('click', toggleMenu)
+    menuBackdrop?.addEventListener('click', () => setMenuOpen(false))
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('is-open')) setMenuOpen(false)
+    })
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => setMenuOpen(false))
+    })
+    setMenuOpen(false)
   }
 
   // Price badges
@@ -179,7 +211,8 @@
     const optEl = $('#calc-opt', box)
     const colorEl = $('#calc-color', box)
     const qtyEl = $('.calc-qty-value', box)
-    const qtyGroup = $('.calc-qty-group', box)
+    const minusBtn = $('.calc-qty-minus', box)
+    const plusBtn = $('.calc-qty-plus', box)
     const colorBtns = $$('.calc-color-swatch', box)
     const priceEl = $('#calc-price', box)
     const detailEl = $('#calc-detail', box)
@@ -199,6 +232,8 @@
     function setQty(n) {
       qty = Math.max(1, Math.min(99, n))
       if (qtyEl) qtyEl.textContent = String(qty)
+      if (minusBtn) minusBtn.disabled = qty <= 1
+      if (plusBtn) plusBtn.disabled = qty >= 99
       refresh()
     }
 
@@ -238,21 +273,29 @@
       box.dataset.qty = String(q)
     }
 
-    refresh()
-
     wEl.addEventListener('input', refresh)
     hEl.addEventListener('input', refresh)
     if (optEl) optEl.addEventListener('change', refresh)
     if (calcBtn) calcBtn.addEventListener('click', refresh)
-    if (qtyGroup) {
-      qtyGroup.addEventListener('click', (e) => {
-        const btn = e.target.closest('.calc-qty-minus, .calc-qty-plus')
-        if (!btn || !qtyGroup.contains(btn)) return
+
+    function onQtyChange(delta) {
+      setQty(getQty() + delta)
+    }
+
+    if (minusBtn) {
+      minusBtn.addEventListener('click', (e) => {
         e.preventDefault()
-        if (btn.classList.contains('calc-qty-minus')) setQty(getQty() - 1)
-        else setQty(getQty() + 1)
+        onQtyChange(-1)
       })
     }
+    if (plusBtn) {
+      plusBtn.addEventListener('click', (e) => {
+        e.preventDefault()
+        onQtyChange(1)
+      })
+    }
+
+    setQty(getQty())
 
     try {
       const map = await fetchPricing()
@@ -279,8 +322,14 @@
     const openBtn = $('#quote-open')
     const closeBtn = $('#quote-close')
     const form = $('#quote-form')
+    const closeModal = () => modal?.classList.add('hidden')
     if (openBtn && modal) openBtn.addEventListener('click', () => modal.classList.remove('hidden'))
-    if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.add('hidden'))
+    if (closeBtn && modal) closeBtn.addEventListener('click', closeModal)
+    if (modal) {
+      modal.addEventListener('click', e => {
+        if (e.target === modal) closeModal()
+      })
+    }
     if (form) {
       form.addEventListener('submit', async e => {
         e.preventDefault()
@@ -311,6 +360,113 @@
     }
   }
 
+  function initRepairTapeSelector() {
+    const box = $('#repair-tape-selector')
+    if (!box) return
+    const name = box.dataset.name || 'Sineklik Tamir Bandı'
+    const select = $('#repair-variant-select')
+    const priceEl = $('#repair-tape-price')
+    const detailEl = $('#repair-tape-detail')
+    const waBtn = $('#repair-tape-wa')
+    const waBottom = $('#repair-tape-wa-bottom')
+    let catalog = null
+    let variants = []
+
+    function variantLabel(v) {
+      return `${v.renk} · En ${v.en} mm · Boy ${v.boy} cm · Genişlik ${v.genislik} mm · ${v.paket}`
+    }
+
+    function priceWithKdv(v) {
+      const kdv = Number(catalog?.kdv_orani ?? 0.20) || 0.20
+      const base = Number(v?.fiyat) || 0
+      if (base <= 0) return null
+      return Math.round(base * (1 + kdv))
+    }
+
+    function currentVariant() {
+      const id = select?.value
+      return variants.find(v => v.id === id) || variants[0] || null
+    }
+
+    function buildMsg(v) {
+      if (!v) return `Merhaba, ${name} için sipariş vermek istiyorum.`
+      const price = priceWithKdv(v)
+      const pricePart = price ? ` — yaklaşık ₺${formatTry(price)} (KDV dahil)` : ''
+      return `Merhaba, ${name} - ${v.renk} renk - En ${v.en} mm, Boy ${v.boy} cm, Genişlik ${v.genislik} mm - ${v.paket} için sipariş vermek istiyorum${pricePart}.`
+    }
+
+    function refresh() {
+      const v = currentVariant()
+      const price = v ? priceWithKdv(v) : null
+      if (priceEl) priceEl.textContent = price ? `₺${formatTry(price)}` : (v?.fiyat > 0 ? '—' : 'WhatsApp ile sorun')
+      if (detailEl) {
+        detailEl.textContent = v
+          ? (price ? `${variantLabel(v)} · KDV dahil` : `${variantLabel(v)} · Fiyat için WhatsApp`)
+          : ''
+      }
+      const href = `https://wa.me/${CFG.whatsappNumber}?text=${encodeURIComponent(buildMsg(v))}`
+      if (waBtn) waBtn.href = href
+      if (waBottom) waBottom.href = href
+      const badge = document.querySelector('.price-badge[data-slug="sineklik-tamir-bandi"]')
+      if (badge && price) badge.textContent = `₺${formatTry(price)}'den`
+    }
+
+    function renderOptions() {
+      if (!select) return
+      if (!variants.length) {
+        select.innerHTML = '<option value="">Ürün bulunamadı</option>'
+        refresh()
+        return
+      }
+      select.innerHTML = variants.map(v =>
+        `<option value="${String(v.id).replace(/"/g, '&quot;')}">${variantLabel(v)}</option>`
+      ).join('')
+      refresh()
+    }
+
+    function mergeRepairCatalog(apiCatalog) {
+      const fallback = CFG.repairTapeFallback
+      if (!fallback?.variants?.length) return apiCatalog
+      const variants = (apiCatalog?.variants || []).map(v => {
+        const fb = fallback.variants.find(f =>
+          f.id === v.id || (f.renk === v.renk && f.paket === v.paket)
+        )
+        const fiyat = Number(v.fiyat) > 0 ? Number(v.fiyat) : Number(fb?.fiyat) || 0
+        return { ...v, fiyat }
+      })
+      return { ...apiCatalog, variants, kdv_orani: apiCatalog?.kdv_orani ?? fallback.kdv_orani }
+    }
+
+    async function loadCatalog() {
+      try {
+        const res = await fetch(CFG.repairTapeApi, { cache: 'no-store' })
+        if (!res.ok) throw new Error('repair-tape')
+        catalog = mergeRepairCatalog(await res.json())
+        variants = Array.isArray(catalog?.variants) ? catalog.variants : []
+        if (!variants.length) throw new Error('empty')
+      } catch {
+        catalog = CFG.repairTapeFallback || { kdv_orani: 0.20, variants: [] }
+        variants = catalog.variants || []
+      }
+      renderOptions()
+    }
+
+    select?.addEventListener('change', refresh)
+    loadCatalog()
+  }
+
+  function initRepairTapeGallery() {
+    const main = $('#repair-tape-main')
+    if (!main) return
+    $$('.repair-gallery-thumb').forEach(btn => {
+      btn.addEventListener('click', () => {
+        main.src = btn.dataset.src || main.src
+        $$('.repair-gallery-thumb').forEach(b => b.classList.remove('ring-2', 'ring-primary'))
+        btn.classList.add('ring-2', 'ring-primary')
+      })
+    })
+  }
+
   // Contact form
   const contactForm = $('#contact-form')
   if (contactForm) {
@@ -339,9 +495,18 @@
   }
 
   function boot() {
-    updateBadges()
-    renderPricesTable()
+    const runPricing = () => {
+      updateBadges()
+      renderPricesTable()
+    }
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(runPricing, { timeout: 2500 })
+    } else {
+      setTimeout(runPricing, 1200)
+    }
     initCalculator()
+    initRepairTapeSelector()
+    initRepairTapeGallery()
   }
 
   if (document.readyState === 'loading') {

@@ -181,14 +181,18 @@ function form_client_ip(): string
     return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 }
 
+function form_rate_limit_ip(): string
+{
+    return preg_replace('/[^a-zA-Z0-9\.\:]/', '', (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0'));
+}
+
 function form_rate_limit_ok(string $bucket, int $max = 5, int $windowSec = 600): bool
 {
     $dir = __DIR__ . '/../data/rate-limit';
     if (!is_dir($dir)) {
         mkdir($dir, 0755, true);
     }
-    $ip = preg_replace('/[^a-zA-Z0-9\.\:]/', '', form_client_ip());
-    $file = $dir . '/' . $bucket . '_' . md5($ip) . '.json';
+    $file = $dir . '/' . $bucket . '_' . md5(form_rate_limit_ip()) . '.json';
     $now = time();
     $hits = [];
     if (is_file($file)) {
@@ -206,6 +210,7 @@ function form_rate_limit_ok(string $bucket, int $max = 5, int $windowSec = 600):
 function form_str(string $key, int $max = 500): string
 {
     $v = trim((string) ($_POST[$key] ?? ''));
+    $v = str_replace(["\r", "\n", "\0"], '', $v);
     if (mb_strlen($v) > $max) {
         $v = mb_substr($v, 0, $max);
     }

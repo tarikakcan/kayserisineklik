@@ -2,6 +2,9 @@
   RewriteEngine On
   RewriteBase /
 
+  RewriteRule ^scripts/ - [F,L]
+  RewriteRule ^lib/ - [F,L]
+
   RewriteRule ^$ admin/index.php [L]
   RewriteRule ^admin/?$ admin/index.php [L]
 </IfModule>
@@ -9,3 +12,10 @@
 <Files ".env">
   Require all denied
 </Files>
+
+<IfModule mod_headers.c>
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>

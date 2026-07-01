@@ -16,6 +16,7 @@ export const site = {
   whatsappNumber: '905388202036',
   email: 'info@edekakapi.com',
   logo: '/logo.svg',
+  heroImage: '/assets/hero-home.webp',
   slogans: [
     'İçeri sinek girmesin, ferahlık gelsin.',
     'Her Ölçüye Uyan Sineklik, Her Bütçeye Uygun Fiyat.'
@@ -29,7 +30,9 @@ export const site = {
   },
   description: 'Türkiye\u2019nin her yerine kargo! Plise, menteşeli, sürgülü, kedi ve pencere sinekliği ölçüye özel üretim. Kayseri\u2019de montajlı, 81 il\u2019de güvenli kargo seçeneği.',
   workingHours: 'Pzt - Cmt: 09:00 - 19:00',
-  geo: { latitude: 38.7335, longitude: 35.4855 }
+  geo: { latitude: 38.7335, longitude: 35.4855 },
+  pricingApi: 'https://admin.kayserisineklik.com.tr/api/pricing.php',
+  repairTapeApi: 'https://admin.kayserisineklik.com.tr/api/repair-tape.php',
 };
 
 export const whatsappLink = (msg = 'Merhaba, sineklik için bilgi almak istiyorum.') =>

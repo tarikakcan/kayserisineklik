@@ -21,6 +21,7 @@
   "description": "Türkiye'nin her yerine kargo! Plise, menteşeli, sürgülü, kedi ve pencere sinekliği ölçüye özel üretim.",
   "workingHours": "Pzt - Cmt: 09:00 - 19:00",
   "pricingApi": "https://admin.kayserisineklik.com.tr/api/pricing.php",
+  "repairTapeApi": "https://admin.kayserisineklik.com.tr/api/repair-tape.php",
   "formContact": "/api/contact.php",
   "formQuote": "/api/quote.php"
 }

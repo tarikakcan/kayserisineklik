@@ -2,8 +2,18 @@
 
 ## Yerel çalıştırma
 
+Proje kökünden (önerilen):
+
 ```bash
-cd admin
+npm run admin:setup -- --password "Sifreniz"
+# veya güçlü rastgele şifre:
+npm run admin:setup -- --generate
+```
+
+Elle hash:
+
+```bash
+cd kaynak/admin
 copy .env.example .env
 php scripts/hash-password.php SIFRENIZ
 # Çıkan hash'i .env içindeki ADMIN_PASS_HASH satırına yapıştırın

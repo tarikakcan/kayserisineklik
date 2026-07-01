@@ -31,7 +31,7 @@ export default {
     "text": "Fiyatlandırma açısından, kullanılan güçlendirilmiş tül malzemesi nedeniyle kedi sinekliği, standart pencere sinekliğine göre biraz daha yüksek bir m² fiyatına sahip. Ama bir kedinin tülü yırtıp dışarı çıkması riskini, hem maddi hem de hayvanın güvenliği açısından düşündüğünüzde, bu fiyat farkı gönül rahatlığıyla karşılanabilecek bir yatırım. Sokağa kaçan bir kedinin yaşayabileceği riskleri düşününce, bu küçük fark hiç de büyük gelmeyecek.\n\nEvinizde bir ya da birden fazla evcil hayvan varsa, sineklik seçerken bu detayı atlamamanızı öneririz. Sitemizdeki hesaplayıcıdan ölçülerinizi girerek anlık fiyat alabilir, Kayseri içindeyseniz ücretsiz keşif talep edebilirsiniz. Şehir dışı siparişlerinizi de güvenli kargo ile, aynı kalite garantisiyle gönderiyoruz."
   },
   "inlineImage": {
-    "src": "assets/products/kedi-sinekligi-balkon.png",
+    "src": "assets/products/kedi-sinekligi-balkon.webp",
     "alt": "Balkon sinekliğinde pençesiyle tüle dokunan kedi — güçlendirilmiş polyester tül",
     "caption": "Balkon ve geniş açıklıklarda kedi sinekliği; pençe ve ısırığa karşı güçlendirilmiş tül evcil dostunuzu güvende tutar."
   }

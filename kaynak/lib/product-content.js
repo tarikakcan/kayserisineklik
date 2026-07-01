@@ -7,6 +7,7 @@ import kapi_sinekligi from './product-content/kapi-sinekligi.js'
 import pencere_sinekligi from './product-content/pencere-sinekligi.js'
 import kedi_sinekligi from './product-content/kedi-sinekligi.js'
 import surgulu_sineklik from './product-content/surgulu-sineklik.js'
+import sineklik_tamir_bandi from './product-content/sineklik-tamir-bandi.js'
 
 export const productContentBySlug = {
   'dikey-plise-sineklik': dikey_plise_sineklik,
@@ -17,10 +18,13 @@ export const productContentBySlug = {
   'pencere-sinekligi': pencere_sinekligi,
   'kedi-sinekligi': kedi_sinekligi,
   'surgulu-sineklik': surgulu_sineklik,
+  'sineklik-tamir-bandi': sineklik_tamir_bandi,
 }
 
 export function getProductContent(slug) {
   const c = productContentBySlug[slug]
-  if (!c || !c.howItWorks?.length) return null
+  if (!c) return null
+  if (c.sections?.length) return c
+  if (!c.howItWorks?.length) return null
   return c
 }
