@@ -27,7 +27,10 @@
 <meta name="theme-color" content="#c45a1f"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" media="print" onload="this.media='all'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"/></noscript>
+<link rel="preload" href="../assets/css/site.css" as="style"/>
 <link rel="stylesheet" href="../assets/css/site.css"/>
 <link rel="stylesheet" href="../assets/css/site-fallback.css" media="print" onload="this.media='all'"/>
 <noscript><link rel="stylesheet" href="../assets/css/site-fallback.css"/></noscript>
@@ -82,7 +85,7 @@
 <p class="mt-3 text-lg text-muted-foreground">Bünyan'da ölçüye özel sineklik üretimi, montaj ve kargo hizmeti sunuyoruz.</p>
 </div>
 <div class="region-hero-visual rounded-2xl overflow-hidden border border-border shadow-sm bg-card">
-<img src="../assets/regions/yazin-sineklik-banner.webp" alt="Bünyan sineklik — Kayseri plise sineklik montaj" class="w-full h-auto object-cover" width="1200" height="630" loading="eager"/>
+<img src="../assets/regions/yazin-sineklik-banner.webp" alt="Bünyan sineklik — Kayseri plise sineklik montaj" class="w-full h-auto object-cover" width="1200" height="630" loading="lazy" decoding="async"/>
 </div>
 </div>
 </div></div>
@@ -106,7 +109,7 @@
 
 </div>
 <div class="md:col-span-2 rounded-xl overflow-hidden border border-border">
-<img src="../assets/products/kapi-sinekligi.webp" alt="Bünyan sineklik uygulama örneği" class="w-full aspect-[4/3] object-cover" loading="lazy"/>
+<img src="../assets/products/kapi-sinekligi.webp" alt="Bünyan sineklik uygulama örneği" class="w-full aspect-[4/3] object-cover" loading="lazy" decoding="async"/>
 </div>
 </div>
 </article>
@@ -131,7 +134,7 @@
 <p class="text-sm text-muted-foreground mt-1.5 leading-relaxed">Bina, okul, otel, tesis vb. toplu siparişlerde yerinde ölçü, keşif ve montaj hizmeti sunuyoruz.</p>
 </div></div>
 <div class="rounded-xl overflow-hidden border border-border min-h-[10rem]">
-<img src="../assets/products/kedi-sinekligi.webp" alt="Bünyan sineklik modelleri" class="w-full h-full min-h-[10rem] object-cover" loading="lazy"/>
+<img src="../assets/products/kedi-sinekligi.webp" alt="Bünyan sineklik modelleri" class="w-full h-full min-h-[10rem] object-cover" loading="lazy" decoding="async"/>
 </div>
 </div>
 </article>

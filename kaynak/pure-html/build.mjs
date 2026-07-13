@@ -346,7 +346,10 @@ ${articleMeta}
 <meta name="theme-color" content="#c45a1f"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" media="print" onload="this.media='all'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"/></noscript>
+<link rel="preload" href="${p}assets/css/site.css" as="style"/>
 <link rel="stylesheet" href="${p}assets/css/site.css"/>
 <link rel="stylesheet" href="${p}assets/css/site-fallback.css" media="print" onload="this.media='all'"/>
 <noscript><link rel="stylesheet" href="${p}assets/css/site-fallback.css"/></noscript>
@@ -619,10 +622,12 @@ function copyAssets() {
   if (fs.existsSync(path.join(ROOT, 'public/regions'))) {
     copyDir(path.join(ROOT, 'public/regions'), path.join(OUT, 'assets/regions'))
   }
-  const heroHome = path.join(ROOT, 'public/hero-home.webp')
-  if (fs.existsSync(heroHome)) {
-    fs.mkdirSync(path.join(OUT, 'assets'), { recursive: true })
-    fs.copyFileSync(heroHome, path.join(OUT, 'assets/hero-home.webp'))
+  const heroDir = path.join(ROOT, 'public')
+  fs.mkdirSync(path.join(OUT, 'assets'), { recursive: true })
+  for (const name of fs.readdirSync(heroDir)) {
+    if (/^hero-home(-[\dw]+)?\.webp$/i.test(name)) {
+      fs.copyFileSync(path.join(heroDir, name), path.join(OUT, 'assets', name))
+    }
   }
   copyDir(path.join(ROOT, 'public/api'), path.join(OUT, 'api'))
   const apiDataHt = path.join(ROOT, 'public/api/data/.htaccess')
@@ -747,21 +752,47 @@ function productImageFitClass(p) {
   return isContainedProductImage(p) ? 'object-contain' : 'object-cover'
 }
 
+/** Responsive ürün srcset (400/800/1200). */
+function productSrcset(slug) {
+  return `/assets/products/${slug}-400w.webp 400w, /assets/products/${slug}-800w.webp 800w, /assets/products/${slug}-1200w.webp 1200w`
+}
+
+function productSizes(slug) {
+  return slug === 'sineklik-tamir-bandi'
+    ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px'
+    : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px'
+}
+
+function productImgAttrs(p, { alt, className = '', width = 800, height = 600, eager = false } = {}) {
+  const loading = eager ? '' : ' loading="lazy"'
+  const prio = eager ? ' fetchpriority="high"' : ''
+  const cls = className ? ` class="${className}"` : ''
+  return `src="${esc(p.image)}" srcset="${productSrcset(p.slug)}" sizes="${productSizes(p.slug)}" alt="${alt}"${cls} width="${width}" height="${height}"${loading} decoding="async"${prio}`
+}
+
+function heroImgTag({ className = 'w-full h-full object-cover' } = {}) {
+  return `<img src="${esc(site.heroImage)}" srcset="/assets/hero-home-600w.webp 600w, /assets/hero-home-1200w.webp 1200w, /assets/hero-home-1800w.webp 1800w" sizes="100vw" alt="Kayseri sineklik — Edeka Kapı üretimi" class="${className}" width="1200" height="675" fetchpriority="high" decoding="async"/>`
+}
+
+function lazyImg(src, alt, attrs = '') {
+  return `<img src="${esc(src)}" alt="${esc(alt)}" ${attrs} loading="lazy" decoding="async"/>`
+}
+
 function productCardImageHome(p) {
-  const alt = `${esc(p.name)} — Kayseri sineklik`
+  const alt = `${esc(p.name)} — Kayseri sineklik modeli`
   const badge = `<span class="absolute top-3 right-3 px-2 py-1 text-[10px] font-bold bg-primary text-primary-foreground rounded-full price-badge" data-slug="${p.slug}">${productPriceBadge(p)}</span>`
   if (isContainedProductImage(p)) {
-    return `<div class="product-card-media-contained">${badge}<img src="${esc(p.image)}" alt="${alt}" width="400" height="300" loading="lazy" decoding="async"/></div>`
+    return `<div class="product-card-media-contained">${badge}<img ${productImgAttrs(p, { alt, width: 400, height: 300 })}/></div>`
   }
-  return `<div class="aspect-[4/5] relative overflow-hidden"><img src="${esc(p.image)}" alt="${alt}" class="h-full w-full object-cover" width="400" height="500" loading="lazy" decoding="async"/>${badge}</div>`
+  return `<div class="aspect-[4/5] relative overflow-hidden"><img ${productImgAttrs(p, { alt, className: 'h-full w-full object-cover', width: 400, height: 500 })}/>${badge}</div>`
 }
 
 function productCardImageGrid(p) {
   const alt = `${esc(p.name)} — Kayseri sineklik modeli`
   if (isContainedProductImage(p)) {
-    return `<div class="product-card-media-contained"><img src="${esc(p.image)}" alt="${alt}"/></div>`
+    return `<div class="product-card-media-contained"><img ${productImgAttrs(p, { alt, width: 400, height: 300 })}/></div>`
   }
-  return `<img src="${esc(p.image)}" alt="${alt}" class="aspect-[4/3] object-cover w-full"/>`
+  return `<img ${productImgAttrs(p, { alt, className: 'aspect-[4/3] object-cover w-full', width: 800, height: 600 })}/>`
 }
 
 function pageHome() {
@@ -770,14 +801,14 @@ function pageHome() {
 ${productCardImageHome(p)}
 <div class="p-5"><h3 class="font-display font-bold text-xl">${esc(p.name)}</h3><p class="text-sm text-muted-foreground mt-2">${esc(p.tagline)}</p></div></a>`).join('')
   const blogs = blogPosts.slice(0, 3).map(b => `<a href="${url(`blog/${b.slug}.html`)}" class="group rounded-3xl overflow-hidden bg-card border block">
-<div class="aspect-[16/10] overflow-hidden"><img src="${esc(blogCoverSrc(b.cover))}" alt="${esc(b.title)}" class="h-full w-full object-cover"/></div>
+<div class="aspect-[16/10] overflow-hidden">${lazyImg(blogCoverSrc(b.cover), b.title, 'class="h-full w-full object-cover"')}</div>
 <div class="p-5"><h3 class="font-display font-bold text-lg">${esc(b.title)}</h3><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
   write('index.html', layout({
     title: `${site.name} | Plise, Menteşeli ve Sürgülü Sineklik`,
     description: site.description,
     canonical: '/',
     ogImage: site.heroImage,
-    lcpPreload: site.heroImage,
+    lcpPreload: '/assets/hero-home-1200w.webp',
     jsonLdData: [schemaLocalBusiness(), schemaWebSite()],
     body: `<section class="warm-hero"><div class="container py-14 md:py-24 grid lg:grid-cols-2 gap-10 items-center">
 <div><h1 class="text-4xl md:text-6xl font-bold leading-tight">İçeri sinek girmesin, <span class="text-primary ink-underline">ferahlık gelsin</span>.</h1>
@@ -786,7 +817,7 @@ ${productCardImageHome(p)}
 <a href="${wa()}" class="inline-flex items-center px-7 py-3 rounded-full bg-[#25D366] text-white font-semibold wa-cta">WhatsApp'tan Teklif Al</a>
 <a href="tel:${site.phoneIntl}" class="inline-flex items-center px-6 py-3 rounded-full border font-semibold">${esc(site.phone)}</a>
 </div></div>
-<div class="rounded-3xl overflow-hidden frame-card aspect-[4/3] w-full"><img src="${esc(site.heroImage)}" alt="Kayseri plise sineklik — Erciyes manzaralı pencere" width="800" height="600" fetchpriority="high" decoding="async" class="w-full h-full object-cover"/></div>
+<div class="rounded-3xl overflow-hidden frame-card aspect-[4/3] w-full">${heroImgTag()}</div>
 </div></section>
 <section class="container py-16"><h2 class="text-3xl font-bold mb-8">Koleksiyon</h2><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">${cards}</div></section>
 <section class="container py-10"><div class="grid md:grid-cols-3 gap-5">${blogs}</div></section>`
@@ -831,7 +862,7 @@ function pageProduct(p) {
     ? renderPriceSection(rich, p, { esc, formatPrice })
     : ''
   const others = products.filter(x => x.slug !== p.slug).slice(0, 4).map(o =>
-    `<a href="${url(`urunler/${o.slug}.html`)}" class="rounded-xl border bg-card block overflow-hidden"><img src="${esc(o.image)}" alt="${esc(o.name)}" class="aspect-[4/3] object-cover w-full"/><div class="p-3 text-sm font-semibold">${esc(o.name)}</div></a>`
+    `<a href="${url(`urunler/${o.slug}.html`)}" class="rounded-xl border bg-card block overflow-hidden"><img ${productImgAttrs(o, { alt: esc(o.name), className: 'aspect-[4/3] object-cover w-full', width: 400, height: 300 })}/><div class="p-3 text-sm font-semibold">${esc(o.name)}</div></a>`
   ).join('')
   write(`urunler/${p.slug}.html`, layout({
     title: `${p.name} Fiyatları`,
@@ -847,7 +878,7 @@ function pageProduct(p) {
     body: `<div class="container pt-4 text-xs text-muted-foreground"><a href="${url('index.html')}">Anasayfa</a> › <a href="${url('urunler.html')}">Ürünler</a> › ${esc(p.name)}</div>
 <section class="container py-8">
 <div class="product-page-grid grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
-<div class="product-page-media min-w-0"><img src="${esc(p.image)}" alt="${esc(p.name)} — Kayseri sineklik" class="rounded-2xl border ${productImgClass} ${productImgFit} w-full max-w-full"/></div>
+<div class="product-page-media min-w-0"><img ${productImgAttrs(p, { alt: `${esc(p.name)} — Kayseri sineklik`, className: `rounded-2xl border ${productImgClass} ${productImgFit} w-full max-w-full`, width: 800, height: 600 })}/></div>
 <aside class="product-page-aside min-w-0 w-full space-y-4">
 <div class="rounded-2xl border bg-card p-6 shadow-sm" id="calculator" data-slug="${p.slug}" data-name="${esc(p.name)}">
 <h2 class="font-semibold text-primary text-lg">Anlık Fiyat Hesaplayıcı</h2>
@@ -894,10 +925,10 @@ function pagePackageProduct(p) {
   const gallery = (p.gallery || [p.image]).map((img, i) => {
     const src = esc(img)
     return `<button type="button" class="repair-gallery-thumb rounded-lg border overflow-hidden ${i === 0 ? 'ring-2 ring-primary' : ''}" data-src="${src}" aria-label="Görsel ${i + 1}">
-<img src="${src}" alt="${esc(p.name)} görsel ${i + 1}" class="${imgClass} ${imgFit} w-full h-full"/></button>`
+<img src="${src}" alt="${esc(p.name)} görsel ${i + 1}" class="${imgClass} ${imgFit} w-full h-full" loading="lazy" decoding="async"/></button>`
   }).join('')
   const others = products.filter(x => x.slug !== p.slug && x.saleType !== 'package').slice(0, 4).map(o =>
-    `<a href="${url(`urunler/${o.slug}.html`)}" class="rounded-xl border bg-card block overflow-hidden"><img src="${esc(o.image)}" alt="${esc(o.name)}" class="aspect-[4/3] object-cover w-full"/><div class="p-3 text-sm font-semibold">${esc(o.name)}</div></a>`
+    `<a href="${url(`urunler/${o.slug}.html`)}" class="rounded-xl border bg-card block overflow-hidden"><img ${productImgAttrs(o, { alt: esc(o.name), className: 'aspect-[4/3] object-cover w-full', width: 400, height: 300 })}/><div class="p-3 text-sm font-semibold">${esc(o.name)}</div></a>`
   ).join('')
   write(`urunler/${p.slug}.html`, layout({
     title: p.name,
@@ -914,7 +945,7 @@ function pagePackageProduct(p) {
 <section class="container py-8">
 <div class="product-page-grid grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
 <div class="product-page-media min-w-0">
-<div class="rounded-2xl border overflow-hidden product-page-media-contained"><img id="repair-tape-main" src="${esc(p.image)}" alt="${esc(p.name)} — Kayseri sineklik tamir bandı" class="${imgClass} ${imgFit} w-full max-w-full"/></div>
+<div class="rounded-2xl border overflow-hidden product-page-media-contained"><img id="repair-tape-main" ${productImgAttrs(p, { alt: `${esc(p.name)} — Kayseri sineklik tamir bandı`, className: `${imgClass} ${imgFit} w-full max-w-full`, width: 800, height: 600 })}/></div>
 <div class="grid grid-cols-3 gap-2 mt-3">${gallery}</div>
 </div>
 <aside class="product-page-aside min-w-0 w-full">
@@ -1051,7 +1082,7 @@ function pageStatic(name, title, h1, content, description) {
 
 function pageBlogList() {
   const cards = blogPosts.map(b => `<a href="${url(`blog/${b.slug}.html`)}" class="rounded-2xl border bg-card overflow-hidden block">
-<img src="${esc(blogCoverSrc(b.cover))}" alt="${esc(b.title)}" class="aspect-[16/10] object-cover w-full"/><div class="p-5"><h2 class="font-bold">${esc(b.title)}</h2><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
+<img src="${esc(blogCoverSrc(b.cover))}" alt="${esc(b.title)}" class="aspect-[16/10] object-cover w-full" loading="lazy" decoding="async"/><div class="p-5"><h2 class="font-bold">${esc(b.title)}</h2><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
   write('blog/index.html', layout({
     title: 'Sineklik Rehberi ve Blog',
     description: 'Sineklik çeşitleri, ölçü alma, bakım, tamir ve montaj hakkında uzman rehber yazıları. Kayseri Sineklik blog.',
@@ -1090,8 +1121,8 @@ function pageBlogPost(b) {
     ? renderBlogBlocks(blocks, { esc, assetPrefix })
     : b.content.map(c => `<h2 class="text-xl font-bold mt-8">${esc(c.h)}</h2><p class="text-muted-foreground mt-2">${esc(c.p)}</p>`).join('')
   const heroImg = blocks && cover
-    ? `<img src="${esc(cover)}" alt="${esc(b.title)}" class="mt-6 rounded-2xl w-full border object-cover" loading="lazy"/>`
-    : (!blocks ? `<img src="${esc(cover)}" alt="${esc(b.title)}" class="mt-6 rounded-2xl w-full border object-cover"/>` : '')
+    ? `<img src="${esc(cover)}" alt="${esc(b.title)}" class="mt-6 rounded-2xl w-full border object-cover" loading="lazy" decoding="async"/>`
+    : (!blocks ? `<img src="${esc(cover)}" alt="${esc(b.title)}" class="mt-6 rounded-2xl w-full border object-cover" loading="lazy" decoding="async"/>` : '')
   const faqSchema = schemaFaq(b.faq)
   const breadcrumbs = schemaBreadcrumb([
     { name: 'Anasayfa', href: '/' },

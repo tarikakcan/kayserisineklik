@@ -297,11 +297,23 @@
 
     setQty(getQty())
 
-    try {
-      const map = await fetchPricing()
-      row = normalizeRow(slug, map)
-      refresh()
-    } catch { /* fallback row already set */ }
+    // API fiyatını kritik yoldan çıkar: ilk odak / tıklama veya 3 sn sonra
+    let pricingPrefetched = false
+    const prefetchPricing = async () => {
+      if (pricingPrefetched) return
+      pricingPrefetched = true
+      try {
+        const map = await fetchPricing()
+        row = normalizeRow(slug, map)
+        refresh()
+      } catch { /* fallback row already set */ }
+    }
+    const prefetchTargets = [wEl, hEl, optEl, colorEl, calcBtn, minusBtn, plusBtn, ...colorBtns].filter(Boolean)
+    prefetchTargets.forEach(el => {
+      el.addEventListener('focus', prefetchPricing, { once: true })
+      el.addEventListener('pointerdown', prefetchPricing, { once: true })
+    })
+    setTimeout(prefetchPricing, 3000)
 
     colorBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -495,6 +507,7 @@
   }
 
   function boot() {
+    // Rozet / fiyat tablosu: idle'da veya en geç ~2.5 sn (kritik yolu engellemez)
     const runPricing = () => {
       updateBadges()
       renderPricesTable()
@@ -504,6 +517,7 @@
     } else {
       setTimeout(runPricing, 1200)
     }
+    // Hesaplayıcı: fallback fiyatla hemen açılır; API fetch odak/3sn ile ertelenir
     initCalculator()
     initRepairTapeSelector()
     initRepairTapeGallery()

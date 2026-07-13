@@ -27,7 +27,10 @@
 <meta name="theme-color" content="#c45a1f"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" media="print" onload="this.media='all'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"/></noscript>
+<link rel="preload" href="../assets/css/site.css" as="style"/>
 <link rel="stylesheet" href="../assets/css/site.css"/>
 <link rel="stylesheet" href="../assets/css/site-fallback.css" media="print" onload="this.media='all'"/>
 <noscript><link rel="stylesheet" href="../assets/css/site-fallback.css"/></noscript>
@@ -79,7 +82,7 @@
 <p class="mt-3 text-lg text-muted-foreground">Merkez ilçelerde günlük keşif ve montaj; Kayseri genelinde ölçüye özel sineklik üretimi ve kargo.</p>
 </div>
 <div class="region-hero-visual rounded-2xl overflow-hidden border border-border shadow-sm">
-<img src="../assets/regions/yazin-sineklik-banner.webp" alt="Kayseri sineklik — yazın plise sineklik neden şart" class="w-full h-auto object-cover" loading="eager"/>
+<img src="../assets/regions/yazin-sineklik-banner.webp" alt="Kayseri sineklik — yazın plise sineklik neden şart" class="w-full h-auto object-cover" loading="lazy" decoding="async"/>
 </div>
 </div>
 </div></div>
@@ -88,7 +91,7 @@
 <p class="text-sm text-muted-foreground mb-5">Günlük keşif ve montaj hizmeti</p>
 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"><a href="/bolgeler/melikgazi-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/blog/sineklik-olcusu-nasil-alinir.webp" alt="Melikgazi sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/blog/sineklik-olcusu-nasil-alinir.webp" alt="Melikgazi sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Melikgazi Sineklik</h3>
@@ -98,7 +101,7 @@
 </div>
 </a><a href="/bolgeler/kocasinan-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/products/pencere-sinekligi.webp" alt="Kocasinan sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/products/pencere-sinekligi.webp" alt="Kocasinan sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Kocasinan Sineklik</h3>
@@ -108,7 +111,7 @@
 </div>
 </a><a href="/bolgeler/talas-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/products/kedi-sinekligi.webp" alt="Talas sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/products/kedi-sinekligi.webp" alt="Talas sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Talas Sineklik</h3>
@@ -118,7 +121,7 @@
 </div>
 </a><a href="/bolgeler/hacilar-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/blog/sineklik-yirtik-delik-tamiri.webp" alt="Hacılar sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/blog/sineklik-yirtik-delik-tamiri.webp" alt="Hacılar sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Hacılar Sineklik</h3>
@@ -128,7 +131,7 @@
 </div>
 </a><a href="/bolgeler/incesu-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/products/kedi-sinekligi.webp" alt="İncesu sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/products/kedi-sinekligi.webp" alt="İncesu sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">İncesu Sineklik</h3>
@@ -142,7 +145,7 @@
 <p class="text-sm text-muted-foreground mb-5">Bireysel siparişlerde kargo; toplu işlerde yerinde montaj</p>
 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"><a href="/bolgeler/develi-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/regions/yazin-sineklik-banner.webp" alt="Develi sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/regions/yazin-sineklik-banner.webp" alt="Develi sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Develi Sineklik</h3>
@@ -152,7 +155,7 @@
 </div>
 </a><a href="/bolgeler/yahyali-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/regions/yazin-sineklik-banner.webp" alt="Yahyalı sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/regions/yazin-sineklik-banner.webp" alt="Yahyalı sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Yahyalı Sineklik</h3>
@@ -162,7 +165,7 @@
 </div>
 </a><a href="/bolgeler/bunyan-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/products/pencere-sinekligi.webp" alt="Bünyan sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/products/pencere-sinekligi.webp" alt="Bünyan sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Bünyan Sineklik</h3>
@@ -172,7 +175,7 @@
 </div>
 </a><a href="/bolgeler/tomarza-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/products/kapi-sinekligi.webp" alt="Tomarza sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/products/kapi-sinekligi.webp" alt="Tomarza sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Tomarza Sineklik</h3>
@@ -182,7 +185,7 @@
 </div>
 </a><a href="/bolgeler/pinarbasi-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/products/pencere-sinekligi.webp" alt="Pınarbaşı sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/products/pencere-sinekligi.webp" alt="Pınarbaşı sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Pınarbaşı Sineklik</h3>
@@ -192,7 +195,7 @@
 </div>
 </a><a href="/bolgeler/sarioglan-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/hero-home.webp" alt="Sarıoğlan sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/hero-home.webp" alt="Sarıoğlan sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Sarıoğlan Sineklik</h3>
@@ -202,7 +205,7 @@
 </div>
 </a><a href="/bolgeler/sariz-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/regions/yazin-sineklik-banner.webp" alt="Sarız sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/regions/yazin-sineklik-banner.webp" alt="Sarız sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Sarız Sineklik</h3>
@@ -212,7 +215,7 @@
 </div>
 </a><a href="/bolgeler/akkisla-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/products/kedi-sinekligi-balkon.webp" alt="Akkışla sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/products/kedi-sinekligi-balkon.webp" alt="Akkışla sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Akkışla Sineklik</h3>
@@ -222,7 +225,7 @@
 </div>
 </a><a href="/bolgeler/felahiye-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/products/kedi-sinekligi.webp" alt="Felahiye sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/products/kedi-sinekligi.webp" alt="Felahiye sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Felahiye Sineklik</h3>
@@ -232,7 +235,7 @@
 </div>
 </a><a href="/bolgeler/ozvatan-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/products/pencere-sinekligi.webp" alt="Özvatan sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/products/pencere-sinekligi.webp" alt="Özvatan sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Özvatan Sineklik</h3>
@@ -242,7 +245,7 @@
 </div>
 </a><a href="/bolgeler/yesilhisar-sineklik" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="../assets/products/kedi-sinekligi.webp" alt="Yeşilhisar sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="../assets/products/kedi-sinekligi.webp" alt="Yeşilhisar sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">Yeşilhisar Sineklik</h3>

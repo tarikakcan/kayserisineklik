@@ -66,7 +66,7 @@ export function renderRegionPage(district, content, { esc, site, url, products, 
 <p class="mt-3 text-lg text-muted-foreground">${esc(heroLead)}</p>
 </div>
 <div class="region-hero-visual rounded-2xl overflow-hidden border border-border shadow-sm bg-card">
-<img src="${esc(heroSrc)}" alt="${esc(district.name)} sineklik — Kayseri plise sineklik montaj" class="w-full h-auto object-cover" width="1200" height="630" loading="eager"/>
+<img src="${esc(heroSrc)}" alt="${esc(district.name)} sineklik — Kayseri plise sineklik montaj" class="w-full h-auto object-cover" width="1200" height="630" loading="lazy" decoding="async"/>
 </div>
 </div>
 </div></div>
@@ -85,14 +85,14 @@ ${regionCard('📍', `${esc(district.nameIn)} Sineklik Hizmeti`, `<div class="gr
 ${content.serviceSummary ? `<p class="text-muted-foreground leading-relaxed">${esc(content.serviceSummary)}</p>` : ''}
 </div>
 <div class="md:col-span-2 rounded-xl overflow-hidden border border-border">
-<img src="${esc(secondarySrc)}" alt="${esc(district.name)} sineklik uygulama örneği" class="w-full aspect-[4/3] object-cover" loading="lazy"/>
+<img src="${esc(secondarySrc)}" alt="${esc(district.name)} sineklik uygulama örneği" class="w-full aspect-[4/3] object-cover" loading="lazy" decoding="async"/>
 </div>
 </div>`)}
 
 ${regionCard('🛠', 'Hizmet Detayları', `<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">${serviceGrid}</div>
 <div class="rounded-xl overflow-hidden border border-border min-h-[10rem]">
-<img src="${esc(accentSrc)}" alt="${esc(district.name)} sineklik modelleri" class="w-full h-full min-h-[10rem] object-cover" loading="lazy"/>
+<img src="${esc(accentSrc)}" alt="${esc(district.name)} sineklik modelleri" class="w-full h-full min-h-[10rem] object-cover" loading="lazy" decoding="async"/>
 </div>
 </div>`)}
 
@@ -147,7 +147,7 @@ export function renderRegionsIndex({ esc, url, districtGroups, publishedDistrict
       const cardImg = assetPrefix + getDistrictImages(d).card.replace(/^\//, '')
       return `<a href="${url(`bolgeler/${d.slug}.html`)}" class="region-index-card rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors block">
 <div class="aspect-[16/9] overflow-hidden bg-muted/30">
-<img src="${esc(cardImg)}" alt="${esc(d.name)} sineklik hizmeti" class="w-full h-full object-cover" loading="lazy"/>
+<img src="${esc(cardImg)}" alt="${esc(d.name)} sineklik hizmeti" class="w-full h-full object-cover" loading="lazy" decoding="async"/>
 </div>
 <div class="p-5">
 <h3 class="font-bold text-lg font-display">${esc(d.name)} Sineklik</h3>
@@ -173,7 +173,7 @@ ${nearby ? `<p class="text-xs text-muted-foreground/80 mt-3">Yakın bölgeler: $
 <p class="mt-3 text-lg text-muted-foreground">Merkez ilçelerde günlük keşif ve montaj; Kayseri genelinde ölçüye özel sineklik üretimi ve kargo.</p>
 </div>
 <div class="region-hero-visual rounded-2xl overflow-hidden border border-border shadow-sm">
-<img src="${esc(assetPrefix + 'assets/regions/yazin-sineklik-banner.webp')}" alt="Kayseri sineklik — yazın plise sineklik neden şart" class="w-full h-auto object-cover" loading="eager"/>
+<img src="${esc(assetPrefix + 'assets/regions/yazin-sineklik-banner.webp')}" alt="Kayseri sineklik — yazın plise sineklik neden şart" class="w-full h-auto object-cover" loading="lazy" decoding="async"/>
 </div>
 </div>
 </div></div>

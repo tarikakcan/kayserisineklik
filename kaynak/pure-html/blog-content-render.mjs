@@ -59,7 +59,7 @@ export function renderBlogBlocks(blocks, { esc, assetPrefix = '../' }) {
         const cap = b.caption
           ? `<figcaption class="text-xs text-muted-foreground mt-2 text-center leading-relaxed">${esc(b.caption)}</figcaption>`
           : ''
-        return `<figure class="mt-8"><img src="${assetPrefix}${b.src}" alt="${esc(b.alt)}" class="rounded-2xl w-full border" loading="lazy"/>${cap}</figure>`
+        return `<figure class="mt-8"><img src="${assetPrefix}${b.src}" alt="${esc(b.alt)}" class="rounded-2xl w-full border" loading="lazy" decoding="async"/>${cap}</figure>`
       }
       case 'cardGrid':
         return `<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-5">${b.cards.map(c => renderBlogCard(c, { esc })).join('')}</div>`

@@ -79,7 +79,7 @@ export function renderProductContentLeft(content, { esc, frameColors, assetPrefi
     .join('')}</ul>`
 
   const inlineImg = content.inlineImage
-    ? `<figure class="my-6"><img src="${assetPrefix}${content.inlineImage.src}" alt="${esc(content.inlineImage.alt)}" class="rounded-2xl w-full border object-cover" loading="lazy"/>${content.inlineImage.caption ? `<figcaption class="text-xs text-muted-foreground mt-2 text-center leading-relaxed">${esc(content.inlineImage.caption)}</figcaption>` : ''}</figure>`
+    ? `<figure class="my-6"><img src="${assetPrefix}${content.inlineImage.src}" alt="${esc(content.inlineImage.alt)}" class="rounded-2xl w-full border object-cover" loading="lazy" decoding="async"/>${content.inlineImage.caption ? `<figcaption class="text-xs text-muted-foreground mt-2 text-center leading-relaxed">${esc(content.inlineImage.caption)}</figcaption>` : ''}</figure>`
     : ''
 
   const howSection = sectionCard(`${sectionHead('Nasıl Çalışır?', 'howItWorks')}<div class="space-y-3">${howHtml}</div>${inlineImg}`)
