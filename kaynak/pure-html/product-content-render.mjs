@@ -127,7 +127,7 @@ export function renderRepairTapeContent(content, { esc, assetPrefix = '' }) {
     ? `<section class="mt-8 rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm">
 <p class="text-muted-foreground leading-relaxed">${esc(content.closing.text)}</p>
 <div class="mt-4 flex flex-wrap gap-3">
-<a href="__REPAIR_WA__" id="repair-tape-wa-bottom" class="inline-flex items-center px-6 py-3 rounded-full bg-[#25D366] text-white font-semibold no-underline hover:bg-[#20bd5a] transition-colors">WhatsApp'tan Sipariş Ver</a>
+<a href="__REPAIR_WA__" id="repair-tape-wa-bottom" class="inline-flex items-center px-6 py-3 rounded-full bg-[#0D7A36] text-white font-semibold no-underline hover:bg-[#0A6B2F] transition-colors">WhatsApp'tan Sipariş Ver</a>
 <a href="__REPAIR_BLOG__" class="inline-flex items-center px-6 py-3 rounded-full border border-primary text-primary font-semibold no-underline hover:bg-primary/5 transition-colors">${esc(content.closing.blogLink.label)} rehberi</a>
 </div></section>`
     : ''

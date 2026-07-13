@@ -12,7 +12,7 @@ img {
 
 .wa-cta,
 .site-footer-wa-btn {
-  background-color: #128c3e !important;
+  background-color: #0D7A36 !important;
   color: #ffffff !important;
 }
 
@@ -142,7 +142,7 @@ main img:not([class*="aspect"]) {
 #calculator a.calc-action-btn:hover {
   color: #fff;
   text-decoration: none;
-  background: #20bd5a;
+  background: #0A6B2F;
 }
 
 #calculator button.calc-action-btn:hover {
@@ -295,7 +295,7 @@ a[aria-label*="WhatsApp ile yazın"] {
   min-width: 3.5rem;
   min-height: 3.5rem;
   border-radius: 999px;
-  background: #25d366;
+  background: #0D7A36;
   color: #fff;
   box-shadow: 0 10px 24px rgba(37, 211, 102, 0.28);
 }
@@ -680,13 +680,13 @@ body.mobile-menu-open .site-header {
 }
 
 .mobile-menu-wa-btn {
-  background: #25d366;
+  background: #0D7A36;
   color: #fff;
   box-shadow: 0 8px 20px rgba(37, 211, 102, 0.22);
 }
 
 .mobile-menu-wa-btn:hover {
-  background: #20bd5a;
+  background: #0A6B2F;
   color: #fff;
 }
 
@@ -747,12 +747,12 @@ body.mobile-menu-open .site-header {
 }
 
 .site-footer-wa-btn:hover {
-  background: #20bd5a !important;
+  background: #0A6B2F !important;
   color: #fff;
 }
 
 .product-rich-content h2 {
-  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-family: var(--font-display, 'Playfair Display', 'Playfair Display Fallback', Georgia, serif);
 }
 
 .product-rich-content h3 {
@@ -1475,12 +1475,12 @@ body.mobile-menu-open .site-header {
 }
 
 .legal-cta-btn--wa {
-  background: #25d366;
+  background: #0D7A36;
   color: #fff;
 }
 
 .legal-cta-btn--wa:hover {
-  background: #20bd5a;
+  background: #0A6B2F;
   color: #fff;
 }
 
@@ -1824,12 +1824,12 @@ body.mobile-menu-open .site-header {
 }
 
 .region-cta-btn--wa {
-  background: #25d366;
+  background: #0D7A36;
   color: #fff;
 }
 
 .region-cta-btn--wa:hover {
-  background: #20bd5a;
+  background: #0A6B2F;
   color: #fff;
 }
 

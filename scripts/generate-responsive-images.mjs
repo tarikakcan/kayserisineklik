@@ -11,7 +11,7 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 const PUBLIC = path.join(ROOT, 'kaynak', 'public')
 
 const PRODUCT_WIDTHS = [400, 800, 1200]
-const HERO_WIDTHS = [600, 1200, 1800]
+const HERO_WIDTHS = [600, 800]
 
 const PRODUCTS = [
   'dikey-plise-sineklik',
@@ -28,7 +28,7 @@ const PRODUCTS = [
 async function resizeWebp(src, dest, width) {
   await sharp(src)
     .resize({ width, withoutEnlargement: true })
-    .webp({ quality: 82, effort: 4 })
+    .webp({ quality: 68, effort: 6 })
     .toFile(dest)
   const kb = Math.round(fs.statSync(dest).size / 1024)
   console.log(`  ${path.basename(dest)} (${kb} KB)`)

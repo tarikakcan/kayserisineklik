@@ -116,7 +116,7 @@ function formConsentBlock() {
 function calcQuoteActions(waIcon) {
   const icon = waIcon.replace('h-7 w-7', 'h-4 w-4 shrink-0')
   return `<div class="calc-action-row flex flex-col sm:flex-row items-stretch gap-2 pt-1">
-<a id="calc-wa" href="${wa()}" target="_blank" rel="noreferrer" aria-label="WhatsApp'tan teklif al" class="calc-action-btn flex-1 inline-flex items-center justify-center gap-1.5 min-h-[2.75rem] py-2 px-2 rounded-md bg-[#25D366] text-white text-sm font-semibold no-underline hover:bg-[#20bd5a] transition-colors">${icon}<span class="text-center leading-tight">WhatsApp Teklif</span></a>
+<a id="calc-wa" href="${wa()}" target="_blank" rel="noreferrer" aria-label="WhatsApp'tan teklif al" class="calc-action-btn flex-1 inline-flex items-center justify-center gap-1.5 min-h-[2.75rem] py-2 px-2 rounded-md bg-[#0D7A36] text-white text-sm font-semibold no-underline hover:bg-[#0A6B2F] transition-colors">${icon}<span class="text-center leading-tight">WhatsApp Teklif</span></a>
 <button type="button" id="quote-open" aria-label="Form ile teklif iste" class="calc-action-btn flex-1 inline-flex items-center justify-center min-h-[2.75rem] py-2 px-2 rounded-md border border-primary text-primary text-sm font-semibold bg-background hover:bg-primary/5 transition-colors"><span class="text-center leading-tight">Form ile Teklif</span></button>
 </div>`
 }
@@ -294,7 +294,7 @@ function staticPricesTable() {
 const waIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" class="wa-icon h-7 w-7" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`
 
 function whatsappFab() {
-  return `<a href="${wa()}" target="_blank" rel="noreferrer" title="WhatsApp: ${esc(site.phone)}" class="fixed bottom-5 right-5 z-50 h-14 w-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:bg-[#20bd5a] hover:scale-105 transition-transform" aria-label="WhatsApp ile yazın: ${esc(site.phone)}">${waIconSvg}</a>`
+  return `<a href="${wa()}" target="_blank" rel="noreferrer" title="WhatsApp: ${esc(site.phone)}" class="fixed bottom-5 right-5 z-50 h-14 w-14 rounded-full bg-[#0D7A36] text-white flex items-center justify-center shadow-lg hover:bg-[#0A6B2F] hover:scale-105 transition-transform" aria-label="WhatsApp ile yazın: ${esc(site.phone)}">${waIconSvg}</a>`
 }
 
 function jsonLd(data) {
@@ -312,7 +312,7 @@ function head({ title, description, canonical, depth = 0, jsonLdData, ogImage, o
     ? (lcpPreload.startsWith('http') ? lcpPreload : `${p}${lcpPreload.replace(/^\//, '')}`)
     : ''
   const lcpLink = lcpHref
-    ? `<link rel="preload" as="image" href="${esc(lcpHref)}" fetchpriority="high"/>`
+    ? `<link rel="preload" as="image" href="${esc(lcpHref)}" imagesrcset="/assets/hero-home-600w.webp 600w, /assets/hero-home-800w.webp 800w" imagesizes="(max-width: 1023px) 400px, 50vw" fetchpriority="high"/>`
     : ''
   const articleMeta = ogType === 'article' && datePublished
     ? `<meta property="article:published_time" content="${esc(datePublished)}"/>`
@@ -354,7 +354,11 @@ ${articleMeta}
 <link rel="stylesheet" href="${p}assets/css/site-fallback.css" media="print" onload="this.media='all'"/>
 <noscript><link rel="stylesheet" href="${p}assets/css/site-fallback.css"/></noscript>
 ${lcpLink}
-<style>:root{--font-sans:'Inter',"Inter Fallback",Arial,sans-serif;--font-display:'Playfair Display',"Playfair Display Fallback","Times New Roman",serif}body{font-family:var(--font-sans)}h1,h2,h3,.font-display{font-family:var(--font-display),"Playfair Display Fallback",Georgia,serif}.site-header{background-color:#fff!important;background-color:rgba(255,255,255,.92)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}#mobile-menu,#mobile-menu-backdrop{display:none!important;visibility:hidden!important;pointer-events:none!important}#mobile-menu.is-open{display:flex!important;visibility:visible!important;pointer-events:auto!important}#mobile-menu-backdrop.is-open{display:block!important;visibility:visible!important;pointer-events:auto!important}</style>
+<style>
+@font-face{font-family:'Inter Fallback';src:local('Arial');ascent-override:90.44%;descent-override:22.52%;line-gap-override:0%;size-adjust:107.12%}
+@font-face{font-family:'Playfair Display Fallback';src:local('Times New Roman');ascent-override:97.25%;descent-override:22.56%;line-gap-override:0%;size-adjust:111.26%}
+:root{--font-sans:'Inter',"Inter Fallback",Arial,sans-serif;--font-display:'Playfair Display',"Playfair Display Fallback","Times New Roman",serif}body{font-family:var(--font-sans)}h1,h2,h3,.font-display{font-family:var(--font-display),"Playfair Display Fallback",Georgia,serif}.site-header{background-color:#fff!important;background-color:rgba(255,255,255,.92)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}#mobile-menu,#mobile-menu-backdrop{display:none!important;visibility:hidden!important;pointer-events:none!important}#mobile-menu.is-open{display:flex!important;visibility:visible!important;pointer-events:auto!important}#mobile-menu-backdrop.is-open{display:block!important;visibility:visible!important;pointer-events:auto!important}
+</style>
 ${jsonLdData ? jsonLd(jsonLdData) : ''}
 </head>
 <body class="antialiased">`
@@ -470,7 +474,7 @@ function header(depth = 0) {
 <a href="${url('hakkimizda.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">Hakkımızda</a>
 <a href="${url('iletisim.html')}" class="px-3 py-2 text-sm font-medium hover:text-primary">İletişim</a>
 </nav>
-<a href="${wa()}" target="_blank" rel="noreferrer" class="site-header-wa hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-[#25D366] whitespace-nowrap shrink-0">${waIconSvg.replace('h-7 w-7', 'h-4 w-4')}<span>${esc(site.phone)}</span></a>
+<a href="${wa()}" target="_blank" rel="noreferrer" class="site-header-wa hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-[#0D7A36] whitespace-nowrap shrink-0">${waIconSvg.replace('h-7 w-7', 'h-4 w-4')}<span>${esc(site.phone)}</span></a>
 <button type="button" id="menu-btn" class="mobile-menu-toggle" aria-label="Menüyü aç" aria-expanded="false" aria-controls="mobile-menu">
 <svg class="mobile-menu-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
 </button>
@@ -510,7 +514,7 @@ function footer(depth = 0) {
 <p class="mt-4 text-sm text-muted-foreground leading-relaxed">${esc(site.slogans[0])}</p>
 <p class="mt-2 text-xs text-muted-foreground/80">${esc(site.company)}</p>
 <p class="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-primary/90 bg-primary/5 border border-primary/10 rounded-full px-3 py-1.5">${esc(site.shipping.short)}</p>
-<a href="${wa()}" target="_blank" rel="noreferrer" class="site-footer-wa-btn mt-5 inline-flex items-center gap-2 rounded-lg bg-[#25D366] px-3 py-2 text-xs font-semibold text-white hover:bg-[#1fb855] transition-colors">${waIconSvg.replace('h-7 w-7', 'h-4 w-4')} WhatsApp</a>
+<a href="${wa()}" target="_blank" rel="noreferrer" class="site-footer-wa-btn mt-5 inline-flex items-center gap-2 rounded-lg bg-[#0D7A36] px-3 py-2 text-xs font-semibold text-white hover:bg-[#0A6B2F] transition-colors">${waIconSvg.replace('h-7 w-7', 'h-4 w-4')} WhatsApp</a>
 </div>
 <div class="site-footer-col">
 <h4 class="site-footer-heading font-bold">Bilgi &amp; Hizmet</h4>
@@ -757,25 +761,56 @@ function productSrcset(slug) {
   return `/assets/products/${slug}-400w.webp 400w, /assets/products/${slug}-800w.webp 800w, /assets/products/${slug}-1200w.webp 1200w`
 }
 
-function productSizes(slug) {
-  return slug === 'sineklik-tamir-bandi'
-    ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px'
-    : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px'
+function productSizes(slug, layout = 'card') {
+  if (slug === 'sineklik-tamir-bandi') {
+    return '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px'
+  }
+  if (layout === 'detail') {
+    return '(max-width: 1023px) 100vw, 560px'
+  }
+  // Kart/liste: mobil slot ~400 CSS px → 400w seçilsin
+  return '(max-width: 640px) 400px, (max-width: 1024px) 45vw, 280px'
 }
 
-function productImgAttrs(p, { alt, className = '', width = 800, height = 600, eager = false } = {}) {
+function productImgAttrs(p, { alt, className = '', width = 800, height = 600, eager = false, layout = 'card' } = {}) {
   const loading = eager ? '' : ' loading="lazy"'
   const prio = eager ? ' fetchpriority="high"' : ''
   const cls = className ? ` class="${className}"` : ''
-  return `src="${esc(p.image)}" srcset="${productSrcset(p.slug)}" sizes="${productSizes(p.slug)}" alt="${alt}"${cls} width="${width}" height="${height}"${loading} decoding="async"${prio}`
+  const srcW = width <= 400 ? 400 : 800
+  const src = `/assets/products/${p.slug}-${srcW}w.webp`
+  return `src="${esc(src)}" srcset="${productSrcset(p.slug)}" sizes="${productSizes(p.slug, layout)}" alt="${alt}"${cls} width="${width}" height="${height}"${loading} decoding="async"${prio}`
 }
 
 function heroImgTag({ className = 'w-full h-full object-cover' } = {}) {
-  return `<img src="${esc(site.heroImage)}" srcset="/assets/hero-home-600w.webp 600w, /assets/hero-home-1200w.webp 1200w, /assets/hero-home-1800w.webp 1800w" sizes="(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1280px" alt="Kayseri sineklik — Edeka Kapı üretimi" class="${className}" width="800" height="656" fetchpriority="high" decoding="async"/>`
+  return `<img src="/assets/hero-home-600w.webp" srcset="/assets/hero-home-600w.webp 600w, /assets/hero-home-800w.webp 800w" sizes="(max-width: 1023px) 400px, 50vw" alt="Kayseri sineklik — Edeka Kapı üretimi" class="${className}" width="800" height="656" fetchpriority="high" decoding="async"/>`
 }
 
 function lazyImg(src, alt, attrs = '') {
   return `<img src="${esc(src)}" alt="${esc(alt)}" ${attrs} loading="lazy" decoding="async"/>`
+}
+
+/** Kart/liste için blog kapağı — 400w tercih, ürün cover'larında -400w. */
+function blogCoverCardImg(cover, title) {
+  const alt = esc(title)
+  const cls = 'class="h-full w-full object-cover"'
+  const dims = 'width="640" height="400"'
+  if (!cover) return ''
+  if (cover.startsWith('http')) {
+    return `<img src="${esc(cover)}" alt="${alt}" ${cls} ${dims} loading="lazy" decoding="async"/>`
+  }
+  const m = cover.match(/^\/assets\/(products|blog)\/([^/]+)\.webp$/i)
+  if (!m) {
+    return lazyImg(cover, title, `${cls} ${dims}`)
+  }
+  const folder = m[1]
+  const file = m[2].replace(/-\d+w$/i, '')
+  const src400 = `/assets/${folder}/${file}-400w.webp`
+  const src800 = folder === 'products'
+    ? `/assets/products/${file}-800w.webp`
+    : `/assets/blog/${file}-800w.webp`
+  const srcset = `${src400} 400w, ${src800} 800w`
+  const sizes = '(max-width: 768px) 400px, (max-width: 1024px) 45vw, 360px'
+  return `<img src="${esc(src400)}" srcset="${esc(srcset)}" sizes="${sizes}" alt="${alt}" ${cls} ${dims} loading="lazy" decoding="async"/>`
 }
 
 function productCardImageHome(p) {
@@ -792,7 +827,7 @@ function productCardImageGrid(p) {
   if (isContainedProductImage(p)) {
     return `<div class="product-card-media-contained"><img ${productImgAttrs(p, { alt, width: 400, height: 300 })}/></div>`
   }
-  return `<img ${productImgAttrs(p, { alt, className: 'aspect-[4/3] object-cover w-full', width: 800, height: 600 })}/>`
+  return `<img ${productImgAttrs(p, { alt, className: 'aspect-[4/3] object-cover w-full', width: 400, height: 300 })}/>`
 }
 
 function pageHome() {
@@ -801,20 +836,20 @@ function pageHome() {
 ${productCardImageHome(p)}
 <div class="p-5"><h3 class="font-display font-bold text-xl">${esc(p.name)}</h3><p class="text-sm text-muted-foreground mt-2">${esc(p.tagline)}</p></div></a>`).join('')
   const blogs = blogPosts.slice(0, 3).map(b => `<a href="${url(`blog/${b.slug}.html`)}" class="group rounded-3xl overflow-hidden bg-card border block">
-<div class="aspect-[16/10] overflow-hidden">${lazyImg(blogCoverSrc(b.cover), b.title, 'class="h-full w-full object-cover"')}</div>
+<div class="aspect-[16/10] overflow-hidden">${blogCoverCardImg(b.cover, b.title)}</div>
 <div class="p-5"><h3 class="font-display font-bold text-lg">${esc(b.title)}</h3><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
   write('index.html', layout({
     title: `${site.name} | Plise, Menteşeli ve Sürgülü Sineklik`,
     description: site.description,
     canonical: '/',
     ogImage: site.heroImage,
-    lcpPreload: '/assets/hero-home-1200w.webp',
+    lcpPreload: '/assets/hero-home-600w.webp',
     jsonLdData: [schemaLocalBusiness(), schemaWebSite()],
     body: `<section class="warm-hero"><div class="container py-14 md:py-24 grid lg:grid-cols-2 gap-10 items-center">
 <div><h1 class="text-4xl md:text-6xl font-bold leading-tight">İçeri sinek girmesin, <span class="text-primary ink-underline">ferahlık gelsin</span>.</h1>
 <p class="mt-6 text-lg text-foreground/75">${esc(site.description)}</p>
 <div class="mt-8 flex flex-wrap gap-3">
-<a href="${wa()}" class="inline-flex items-center px-7 py-3 rounded-full bg-[#25D366] text-white font-semibold wa-cta">WhatsApp'tan Teklif Al</a>
+<a href="${wa()}" class="inline-flex items-center px-7 py-3 rounded-full bg-[#0D7A36] text-white font-semibold wa-cta">WhatsApp'tan Teklif Al</a>
 <a href="tel:${site.phoneIntl}" class="inline-flex items-center px-6 py-3 rounded-full border font-semibold">${esc(site.phone)}</a>
 </div></div>
 <div class="rounded-3xl overflow-hidden frame-card aspect-[4/3] w-full">${heroImgTag()}</div>
@@ -878,7 +913,7 @@ function pageProduct(p) {
     body: `<div class="container pt-4 text-xs text-muted-foreground"><a href="${url('index.html')}">Anasayfa</a> › <a href="${url('urunler.html')}">Ürünler</a> › ${esc(p.name)}</div>
 <section class="container py-8">
 <div class="product-page-grid grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
-<div class="product-page-media min-w-0"><img ${productImgAttrs(p, { alt: `${esc(p.name)} — Kayseri sineklik`, className: `rounded-2xl border ${productImgClass} ${productImgFit} w-full max-w-full`, width: 800, height: 600 })}/></div>
+<div class="product-page-media min-w-0"><img ${productImgAttrs(p, { alt: `${esc(p.name)} — Kayseri sineklik`, className: `rounded-2xl border ${productImgClass} ${productImgFit} w-full max-w-full`, width: 800, height: 600, layout: 'detail', eager: true })}/></div>
 <aside class="product-page-aside min-w-0 w-full space-y-4">
 <div class="rounded-2xl border bg-card p-6 shadow-sm" id="calculator" data-slug="${p.slug}" data-name="${esc(p.name)}">
 <h2 class="font-semibold text-primary text-lg">Anlık Fiyat Hesaplayıcı</h2>
@@ -945,7 +980,7 @@ function pagePackageProduct(p) {
 <section class="container py-8">
 <div class="product-page-grid grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
 <div class="product-page-media min-w-0">
-<div class="rounded-2xl border overflow-hidden product-page-media-contained"><img id="repair-tape-main" ${productImgAttrs(p, { alt: `${esc(p.name)} — Kayseri sineklik tamir bandı`, className: `${imgClass} ${imgFit} w-full max-w-full`, width: 800, height: 600 })}/></div>
+<div class="rounded-2xl border overflow-hidden product-page-media-contained"><img id="repair-tape-main" ${productImgAttrs(p, { alt: `${esc(p.name)} — Kayseri sineklik tamir bandı`, className: `${imgClass} ${imgFit} w-full max-w-full`, width: 800, height: 600, layout: 'detail', eager: true })}/></div>
 <div class="grid grid-cols-3 gap-2 mt-3">${gallery}</div>
 </div>
 <aside class="product-page-aside min-w-0 w-full">
@@ -962,7 +997,7 @@ function pagePackageProduct(p) {
 <div class="text-3xl font-extrabold text-primary mt-1" id="repair-tape-price">—</div>
 <div class="text-xs text-muted-foreground mt-1" id="repair-tape-detail"></div>
 </div>
-<a id="repair-tape-wa" href="${wa(`Merhaba, ${p.name} için sipariş vermek istiyorum.`)}" target="_blank" rel="noreferrer" class="flex w-full items-center justify-center gap-2 min-h-[2.75rem] py-3 px-4 rounded-md bg-[#25D366] text-white text-sm font-semibold no-underline hover:bg-[#20bd5a] transition-colors">${waIconSvg.replace('h-7 w-7', 'h-5 w-5')}<span>WhatsApp'tan Sipariş Ver</span></a>
+<a id="repair-tape-wa" href="${wa(`Merhaba, ${p.name} için sipariş vermek istiyorum.`)}" target="_blank" rel="noreferrer" class="flex w-full items-center justify-center gap-2 min-h-[2.75rem] py-3 px-4 rounded-md bg-[#0D7A36] text-white text-sm font-semibold no-underline hover:bg-[#0A6B2F] transition-colors">${waIconSvg.replace('h-7 w-7', 'h-5 w-5')}<span>WhatsApp'tan Sipariş Ver</span></a>
 </div></div></aside>
 <div class="product-page-details min-w-0">
 <h1 class="text-3xl font-extrabold">${esc(p.name)}</h1>
@@ -1060,7 +1095,7 @@ function pageAbout() {
 </div>
 <div class="grid sm:grid-cols-2 gap-4">${cards}</div>
 <div class="flex flex-wrap gap-3 pt-2">
-<a href="${wa('Merhaba, sineklik hakkında bilgi almak istiyorum.')}" class="inline-flex items-center px-6 py-3 rounded-full bg-[#25D366] text-white font-semibold">WhatsApp'tan Yazın</a>
+<a href="${wa('Merhaba, sineklik hakkında bilgi almak istiyorum.')}" class="inline-flex items-center px-6 py-3 rounded-full bg-[#0D7A36] text-white font-semibold">WhatsApp'tan Yazın</a>
 <a href="${url('iletisim.html')}" class="inline-flex items-center px-6 py-3 rounded-full border border-primary text-primary font-semibold">İletişim</a>
 </div>
 </section>`,
@@ -1082,7 +1117,7 @@ function pageStatic(name, title, h1, content, description) {
 
 function pageBlogList() {
   const cards = blogPosts.map(b => `<a href="${url(`blog/${b.slug}.html`)}" class="rounded-2xl border bg-card overflow-hidden block">
-<img src="${esc(blogCoverSrc(b.cover))}" alt="${esc(b.title)}" class="aspect-[16/10] object-cover w-full" loading="lazy" decoding="async"/><div class="p-5"><h2 class="font-bold">${esc(b.title)}</h2><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
+<div class="aspect-[16/10] overflow-hidden">${blogCoverCardImg(b.cover, b.title)}</div><div class="p-5"><h2 class="font-bold">${esc(b.title)}</h2><p class="text-sm text-muted-foreground mt-2">${esc(b.description)}</p></div></a>`).join('')
   write('blog/index.html', layout({
     title: 'Sineklik Rehberi ve Blog',
     description: 'Sineklik çeşitleri, ölçü alma, bakım, tamir ve montaj hakkında uzman rehber yazıları. Kayseri Sineklik blog.',

@@ -31,7 +31,7 @@ DirectoryIndex index.html
     Header set Cache-Control "public, max-age=7776000, immutable"
   </FilesMatch>
   <FilesMatch "\.(css|js)$">
-    Header set Cache-Control "public, max-age=604800"
+    Header set Cache-Control "public, max-age=7776000"
   </FilesMatch>
 </IfModule>
 
@@ -40,7 +40,7 @@ DirectoryIndex index.html
   ExpiresByType image/webp "access plus 90 days"
   ExpiresByType image/jpeg "access plus 90 days"
   ExpiresByType image/png "access plus 90 days"
-  ExpiresByType image/svg+xml "access plus 30 days"
-  ExpiresByType text/css "access plus 7 days"
-  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/svg+xml "access plus 90 days"
+  ExpiresByType text/css "access plus 90 days"
+  ExpiresByType application/javascript "access plus 90 days"
 </IfModule>

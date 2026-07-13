@@ -68,12 +68,12 @@ export function renderBlogBlocks(blocks, { esc, assetPrefix = '../' }) {
           `<p class="text-muted-foreground leading-relaxed mt-3">${p}</p>`
         ).join('')
         const cta = b.cta
-          ? `<a href="${b.cta.href}"${b.cta.external ? ' target="_blank" rel="noreferrer"' : ''} class="inline-flex mt-6 px-6 py-3 rounded-full bg-[#25D366] text-white font-semibold no-underline hover:bg-[#20bd5a] transition-colors">${esc(b.cta.text)}</a>`
+          ? `<a href="${b.cta.href}"${b.cta.external ? ' target="_blank" rel="noreferrer"' : ''} class="inline-flex mt-6 px-6 py-3 rounded-full bg-[#0D7A36] text-white font-semibold no-underline hover:bg-[#0A6B2F] transition-colors">${esc(b.cta.text)}</a>`
           : ''
         return `<section class="mt-10 rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm">${paras}${cta}</section>`
       }
       case 'cta':
-        return `<a href="${b.href}"${b.external ? ' target="_blank" rel="noreferrer"' : ''} class="inline-flex mt-8 px-6 py-3 rounded-full bg-[#25D366] text-white font-semibold no-underline hover:bg-[#20bd5a] transition-colors">${esc(b.text)}</a>`
+        return `<a href="${b.href}"${b.external ? ' target="_blank" rel="noreferrer"' : ''} class="inline-flex mt-8 px-6 py-3 rounded-full bg-[#0D7A36] text-white font-semibold no-underline hover:bg-[#0A6B2F] transition-colors">${esc(b.text)}</a>`
       default:
         return ''
     }
