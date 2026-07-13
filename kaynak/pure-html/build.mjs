@@ -346,15 +346,15 @@ ${articleMeta}
 <meta name="theme-color" content="#c45a1f"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" media="print" onload="this.media='all'"/>
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"/></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=optional"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=optional" media="print" onload="this.media='all'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=optional"/></noscript>
 <link rel="preload" href="${p}assets/css/site.css" as="style"/>
 <link rel="stylesheet" href="${p}assets/css/site.css"/>
 <link rel="stylesheet" href="${p}assets/css/site-fallback.css" media="print" onload="this.media='all'"/>
 <noscript><link rel="stylesheet" href="${p}assets/css/site-fallback.css"/></noscript>
 ${lcpLink}
-<style>:root{--font-sans:'Inter',system-ui,sans-serif;--font-display:'Playfair Display',Georgia,serif}body{font-family:var(--font-sans)}h1,h2,h3,.font-display{font-family:var(--font-display)}.site-header{background-color:#fff!important;background-color:rgba(255,255,255,.92)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}#mobile-menu,#mobile-menu-backdrop{display:none!important;visibility:hidden!important;pointer-events:none!important}#mobile-menu.is-open{display:flex!important;visibility:visible!important;pointer-events:auto!important}#mobile-menu-backdrop.is-open{display:block!important;visibility:visible!important;pointer-events:auto!important}</style>
+<style>:root{--font-sans:'Inter',"Inter Fallback",Arial,sans-serif;--font-display:'Playfair Display',"Playfair Display Fallback","Times New Roman",serif}body{font-family:var(--font-sans)}h1,h2,h3,.font-display{font-family:var(--font-display),"Playfair Display Fallback",Georgia,serif}.site-header{background-color:#fff!important;background-color:rgba(255,255,255,.92)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}#mobile-menu,#mobile-menu-backdrop{display:none!important;visibility:hidden!important;pointer-events:none!important}#mobile-menu.is-open{display:flex!important;visibility:visible!important;pointer-events:auto!important}#mobile-menu-backdrop.is-open{display:block!important;visibility:visible!important;pointer-events:auto!important}</style>
 ${jsonLdData ? jsonLd(jsonLdData) : ''}
 </head>
 <body class="antialiased">`
@@ -558,7 +558,7 @@ function footer(depth = 0) {
 ${mobileMenu()}
 ${whatsappFab()}
 <script>window.SITE_CONFIG=${JSON.stringify({ whatsappNumber: site.whatsappNumber, pricingApi: site.pricingApi || 'https://admin.kayserisineklik.com.tr/api/pricing.php', repairTapeApi: site.repairTapeApi || 'https://admin.kayserisineklik.com.tr/api/repair-tape.php', repairTapeFallback, formContact: '/api/contact.php', formQuote: '/api/quote.php', products: products.map(p=>({slug:p.slug,name:p.name,pricePerM2:p.pricePerM2,minPrice:p.minPrice,options:p.options,selectionType:p.selectionType,saleType:p.saleType||null})) })};</script>
-<script src="${p}assets/js/site.js"></script>
+<script src="${p}assets/js/site.js" defer></script>
 </body></html>`
 }
 
@@ -771,7 +771,7 @@ function productImgAttrs(p, { alt, className = '', width = 800, height = 600, ea
 }
 
 function heroImgTag({ className = 'w-full h-full object-cover' } = {}) {
-  return `<img src="${esc(site.heroImage)}" srcset="/assets/hero-home-600w.webp 600w, /assets/hero-home-1200w.webp 1200w, /assets/hero-home-1800w.webp 1800w" sizes="100vw" alt="Kayseri sineklik — Edeka Kapı üretimi" class="${className}" width="1200" height="675" fetchpriority="high" decoding="async"/>`
+  return `<img src="${esc(site.heroImage)}" srcset="/assets/hero-home-600w.webp 600w, /assets/hero-home-1200w.webp 1200w, /assets/hero-home-1800w.webp 1800w" sizes="(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1280px" alt="Kayseri sineklik — Edeka Kapı üretimi" class="${className}" width="800" height="656" fetchpriority="high" decoding="async"/>`
 }
 
 function lazyImg(src, alt, attrs = '') {

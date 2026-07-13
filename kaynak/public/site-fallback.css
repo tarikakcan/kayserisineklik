@@ -752,7 +752,7 @@ body.mobile-menu-open .site-header {
 }
 
 .product-rich-content h2 {
-  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-family: var(--font-display, 'Playfair Display', 'Playfair Display Fallback', Georgia, serif);
 }
 
 .product-rich-content h3 {
